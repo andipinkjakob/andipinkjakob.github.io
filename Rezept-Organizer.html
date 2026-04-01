@@ -1451,34 +1451,25 @@ function deleteVorrat(id) {
 // ══════════════════════════════════════════
 // GOOGLE SHEETS — JSONP (funktioniert auch lokal, kein CORS-Problem)
 // ══════════════════════════════════════════
-function jsonpGet(params) {
-  return new Promise((resolve) => {
-    if (!SCRIPT_URL) { resolve(null); return; }
-    const cbName = '__cb_' + Date.now() + '_' + Math.floor(Math.random()*10000);
-    const timeout = setTimeout(() => {
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-      resolve(null);
-    }, 8000);
-    window[cbName] = (data) => {
-      clearTimeout(timeout);
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-      resolve(data);
-    };
-    const url = SCRIPT_URL + '?' + new URLSearchParams({...params, callback: cbName, t: Date.now()}).toString();
-    const script = document.createElement('script');
-    script.src = url;
-    script.onerror = () => { clearTimeout(timeout); delete window[cbName]; resolve(null); };
-    document.head.appendChild(script);
-  });
+// ── API helper — alles über GET (wie LTB Monitor) ──
+async function apiGet(params) {
+  if (!SCRIPT_URL) return null;
+  const url = SCRIPT_URL + '?' + new URLSearchParams(params).toString() + '&t=' + Date.now();
+  try {
+    const res = await fetch(url, { mode: 'cors' });
+    return await res.json();
+  } catch(e) {
+    console.warn('Sheets API error:', e);
+    return null;
+  }
 }
 
 // ── Rezepte ──
 function syncRecipe(r, action) {
-  jsonpGet({
+  apiGet({
     sheet: 'rezepte', action,
-    id: r.id, name: encodeURIComponent(r.name||''),
+    id: r.id,
+    name:           encodeURIComponent(r.name||''),
     zutaten:        encodeURIComponent(r.ingredients ? r.ingredients.map(i=>`${i.amount} ${i.unit} ${i.name}`).join('; ') : ''),
     zubereitung:    encodeURIComponent(r.preparation||''),
     tags:           encodeURIComponent(r.tags ? r.tags.join(', ') : ''),
@@ -1492,7 +1483,7 @@ function syncRecipe(r, action) {
 
 // ── Wochenplan ──
 function syncSlot(slotKey, entry) {
-  jsonpGet({
+  apiGet({
     sheet: 'wochenplan', action: 'set',
     slotkey:  encodeURIComponent(slotKey),
     rezeptid: entry ? (entry.id||entry) : '',
@@ -1500,12 +1491,12 @@ function syncSlot(slotKey, entry) {
   });
 }
 function syncClearWeek(weekKey) {
-  jsonpGet({ sheet: 'wochenplan', action: 'clear_week', weekkey: weekKey });
+  apiGet({ sheet: 'wochenplan', action: 'clear_week', weekkey: weekKey });
 }
 
 // ── Kategorien ──
 function syncCategories() {
-  jsonpGet({
+  apiGet({
     sheet: 'kategorien', action: 'sync_all',
     kategorien: encodeURIComponent(JSON.stringify(
       categories.map(c=>({id:c.id, label:c.label, emoji:c.emoji, color:c.color, bg:c.bg}))
@@ -1515,19 +1506,19 @@ function syncCategories() {
 
 // ── MHD ──
 function syncMhd(item, action) {
-  jsonpGet({ sheet: 'mhd', action, id: item.id, name: encodeURIComponent(item.name||''), date: item.date||'' });
+  apiGet({ sheet: 'mhd', action, id: item.id, name: encodeURIComponent(item.name||''), date: item.date||'' });
 }
 
 // ── Vorrat ──
 function syncVorrat(item, action) {
-  jsonpGet({ sheet: 'vorrat', action, id: item.id, name: encodeURIComponent(item.name||''), qty: item.qty??0 });
+  apiGet({ sheet: 'vorrat', action, id: item.id, name: encodeURIComponent(item.name||''), qty: item.qty??0 });
 }
 
-// ── Initial load from Sheets ──
+// ── Laden aus Sheets ──
 async function tryLoadFromSheets() {
   if (!SCRIPT_URL) return;
 
-  const catData = await jsonpGet({ sheet: 'kategorien' });
+  const catData = await apiGet({ sheet: 'kategorien' });
   if (catData && Array.isArray(catData) && catData.length > 0) {
     categories = catData.map(r=>({
       id: r.id||'', label: r.label||'', emoji: r.emoji||'🍳',
@@ -1536,7 +1527,7 @@ async function tryLoadFromSheets() {
     saveCategories(); renderSidebar();
   }
 
-  const recData = await jsonpGet({ sheet: 'rezepte' });
+  const recData = await apiGet({ sheet: 'rezepte' });
   if (recData && Array.isArray(recData) && recData.length > 0) {
     recipes = recData.map(row=>({
       id: String(row.id||Date.now()),
@@ -1557,7 +1548,7 @@ async function tryLoadFromSheets() {
     save(); renderSidebar(); renderGrid();
   }
 
-  const wpData = await jsonpGet({ sheet: 'wochenplan' });
+  const wpData = await apiGet({ sheet: 'wochenplan' });
   if (wpData && Array.isArray(wpData) && wpData.length > 0) {
     mealPlan = {};
     wpData.forEach(row=>{
@@ -1568,7 +1559,7 @@ async function tryLoadFromSheets() {
     saveMealPlan(); renderWeekPlan();
   }
 
-  const mhdData = await jsonpGet({ sheet: 'mhd' });
+  const mhdData = await apiGet({ sheet: 'mhd' });
   if (mhdData && Array.isArray(mhdData) && mhdData.length > 0) {
     mhdItems = mhdData.map(row=>({
       id: String(row.id||'mhd_'+Date.now()),
@@ -1577,7 +1568,7 @@ async function tryLoadFromSheets() {
     saveMhdLocal(); renderMhd();
   }
 
-  const vorratData = await jsonpGet({ sheet: 'vorrat' });
+  const vorratData = await apiGet({ sheet: 'vorrat' });
   if (vorratData && Array.isArray(vorratData) && vorratData.length > 0) {
     vorratItems = vorratData.map(row=>({
       id: String(row.id||'v_'+Date.now()),
@@ -1587,6 +1578,7 @@ async function tryLoadFromSheets() {
   }
 }
 
+// ── Wochenplan ──
 // ══════════════════════════════════════════
 // MOBILE — DRAWER & TABS
 // ══════════════════════════════════════════
