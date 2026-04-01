@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Westendorf Restaurantbewertungen</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --snow:#f0f4f8; --ice:#dce8f0; --midnight:#0d1b2a; --pine:#1a3a2a;
+    --alpine:#2c5f8a; --gold:#c9973a; --warm:#e8d5b0; --rust:#b94a2c;
+    --star-on:#c9973a; --star-off:#c8d8e4;
+    --card:rgba(255,255,255,0.92); --shadow:0 8px 40px rgba(13,27,42,0.13);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:linear-gradient(160deg,#0d1b2a 0%,#1a3a2a 40%,#2c5f8a 100%);min-height:100vh;color:var(--midnight);overflow-x:hidden}
+
+  /* Snow */
+  .flakes{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .flake{position:absolute;top:-10px;color:rgba(255,255,255,0.7);animation:fall linear infinite}
+  @keyframes fall{to{transform:translateY(105vh) rotate(360deg);opacity:0}}
+
+  /* Header */
+  header{position:relative;z-index:10;text-align:center;padding:3rem 1rem 2rem;background:linear-gradient(180deg,rgba(13,27,42,0.85) 0%,transparent 100%)}
+  header .icon{font-size:2.5rem;display:block;margin-bottom:.5rem}
+  header h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:var(--snow);line-height:1.1}
+  header h1 span{color:var(--gold)}
+  header p{color:var(--ice);margin-top:.5rem;font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;font-weight:300}
+
+  /* Year bar */
+  .year-bar{position:relative;z-index:10;display:flex;justify-content:center;gap:.75rem;padding:1rem;flex-wrap:wrap}
+  .ybtn{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);color:var(--snow);border-radius:50px;padding:.4rem 1.2rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;transition:all .2s}
+  .ybtn.active,.ybtn:hover{background:var(--gold);border-color:var(--gold);color:var(--midnight)}
+
+  /* Main */
+  main{position:relative;z-index:5;max-width:900px;margin:0 auto;padding:0 1rem 4rem}
+
+  /* Tabs */
+  .tabs{display:flex;background:rgba(255,255,255,.08);border-radius:16px;padding:5px;margin-bottom:2rem;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15)}
+  .tab{flex:1;text-align:center;padding:.7rem .5rem;cursor:pointer;border-radius:12px;color:var(--ice);font-weight:500;font-size:.9rem;transition:all .25s;letter-spacing:.03em}
+  .tab.active{background:var(--snow);color:var(--midnight)}
+  .tab:hover:not(.active){background:rgba(255,255,255,.12)}
+  .panel{display:none}.panel.active{display:block}
+
+  /* Cards */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.2rem}
+  .card{background:var(--card);border-radius:18px;padding:1.4rem;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+  .card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:var(--gold)}
+  .card:hover{transform:translateY(-3px);box-shadow:0 16px 50px rgba(13,27,42,.2)}
+  .card h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:.25rem}
+  .card .cat{font-size:.72rem;color:var(--alpine);text-transform:uppercase;letter-spacing:.08em;font-weight:500;margin-bottom:.6rem}
+
+  /* Buttons */
+  .btn{display:inline-block;background:var(--midnight);color:var(--snow);border:none;border-radius:8px;padding:.5rem 1.1rem;font-size:.85rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:background .2s}
+  .btn:hover{background:var(--pine)}
+  .btn.gold{background:var(--gold);color:var(--midnight)}.btn.gold:hover{background:#b8862e}
+  .btn.outline{background:transparent;color:var(--midnight);border:1.5px solid var(--midnight)}.btn.outline:hover{background:var(--midnight);color:var(--snow)}
+  .icon-btn{background:none;border:1.5px solid #d5dfe8;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:.9rem;display:inline-flex;align-items:center;justify-content:center;transition:all .18s}
+  .icon-btn.e:hover{background:#eef4fb;border-color:var(--alpine)}
+  .icon-btn.d:hover{background:#fdecea;border-color:var(--rust)}
+
+  /* Add box */
+  .box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:1.5rem;margin-bottom:1.5rem;backdrop-filter:blur(10px)}
+  .box h3{font-family:'Playfair Display',serif;color:var(--snow);margin-bottom:1rem;font-size:1.1rem}
+  .row{display:flex;gap:.75rem;flex-wrap:wrap}
+  .fg{margin-bottom:.85rem}
+  .fg.f{flex:1;min-width:140px;margin-bottom:0}
+
+  /* Form inputs */
+  label{display:block;font-size:.76rem;font-weight:500;color:#666;margin-bottom:.28rem;text-transform:uppercase;letter-spacing:.06em}
+  input[type=text],textarea,select{width:100%;padding:.62rem .9rem;border:1.5px solid #d5dfe8;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.93rem;background:#fff;color:var(--midnight);transition:border-color .2s}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--alpine);box-shadow:0 0 0 3px rgba(44,95,138,.1)}
+  textarea{resize:vertical;min-height:68px}
+
+  /* Stars */
+  .stars{display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:.15rem}
+  .stars input{display:none}
+  .stars label{font-size:1.65rem;cursor:pointer;color:var(--star-off);transition:color .12s;padding:0;text-transform:none;letter-spacing:0}
+  .stars input:checked~label,.stars label:hover,.stars label:hover~label{color:var(--star-on)}
+
+
+
+  /* Modal */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(13,27,42,.75);z-index:100;backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem}
+  .overlay.open{display:flex}
+  .modal{background:var(--snow);border-radius:22px;width:100%;max-width:570px;max-height:90vh;overflow-y:auto;box-shadow:0 30px 80px rgba(13,27,42,.35);animation:mIn .28s ease}
+  @keyframes mIn{from{transform:translateY(22px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+  .mhead{background:var(--midnight);border-radius:20px 20px 0 0;padding:1.3rem 1.5rem;color:var(--snow);display:flex;justify-content:space-between;align-items:flex-start}
+  .mhead h2{font-family:'Playfair Display',serif;font-size:1.25rem}
+  .mhead .sub{color:var(--ice);font-size:.78rem;margin-top:.15rem}
+  .mclose{background:rgba(255,255,255,.15);border:none;color:var(--snow);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0}
+  .mclose:hover{background:var(--rust)}
+  .mbody{padding:1.5rem}
+  .who{background:var(--warm);border-radius:9px;padding:.7rem 1rem;margin-bottom:1.3rem;font-size:.9rem;display:flex;align-items:center;gap:.6rem}
+  .sec{margin-bottom:1.5rem;border-left:3px solid var(--gold);padding-left:.9rem}
+  .sec-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;margin-bottom:.8rem}
+  .submit{width:100%;padding:.82rem;background:linear-gradient(135deg,var(--midnight),var(--pine));color:var(--snow);border:none;border-radius:11px;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s}
+  .submit:hover:not(:disabled){background:linear-gradient(135deg,var(--pine),var(--alpine));transform:translateY(-1px)}
+  .submit:disabled{opacity:.6;cursor:not-allowed}
+
+  /* Toast */
+  .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--pine);color:#fff;padding:.7rem 1.8rem;border-radius:50px;font-weight:500;font-size:.87rem;box-shadow:0 8px 28px rgba(0,0,0,.2);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap}
+  .toast.show{opacity:1}
+
+  /* Archiv */
+  .filters{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:1.4rem}
+  .fsel{padding:.42rem .85rem;border-radius:50px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:var(--snow);font-family:'DM Sans',sans-serif;font-size:.86rem;cursor:pointer}
+  .fsel option{background:var(--midnight)}
+  .entry{background:var(--card);border-radius:13px;padding:1rem 1.2rem;margin-bottom:.85rem;box-shadow:var(--shadow);border-left:4px solid var(--gold)}
+  .ehead{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.4rem;margin-bottom:.5rem}
+  .ehead h3{font-family:'Playfair Display',serif;font-size:1rem}
+  .emeta{font-size:.73rem;color:#888}
+  .badge{display:inline-block;padding:.13rem .5rem;border-radius:50px;font-size:.68rem;font-weight:600;background:var(--gold);color:var(--midnight)}
+  .sd{color:var(--star-on)}
+  .subs{display:flex;gap:1.1rem;flex-wrap:wrap;margin-top:.4rem}
+  .sub{font-size:.8rem}.sublbl{font-size:.7rem;color:#aaa;text-transform:uppercase;letter-spacing:.04em}
+  .courses{margin-top:.6rem;padding-top:.6rem;border-top:1px solid #e8edf2;display:flex;gap:1.1rem;flex-wrap:wrap}
+  .ci{font-size:.8rem}.clbl{font-size:.68rem;color:#bbb;text-transform:uppercase;letter-spacing:.04em}
+  .empty{text-align:center;padding:3rem 1rem;color:rgba(255,255,255,.4)}
+  .empty .ei{font-size:2.5rem;margin-bottom:.7rem}
+
+  @media(max-width:500px){.mbody{padding:1.1rem}.sec{padding-left:.6rem}}
+  /* Password screen */
+  .pw-screen{position:fixed;inset:0;z-index:999;background:linear-gradient(160deg,#0d1b2a 0%,#1a3a2a 40%,#2c5f8a 100%);display:flex;align-items:center;justify-content:center;padding:1rem}
+  .pw-box{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:22px;padding:2.5rem 2rem;width:100%;max-width:360px;text-align:center;backdrop-filter:blur(10px)}
+  .pw-box .icon{font-size:2.5rem;margin-bottom:1rem;display:block}
+  .pw-box h2{font-family:'Playfair Display',serif;color:var(--snow);font-size:1.6rem;margin-bottom:.4rem}
+  .pw-box p{color:var(--ice);font-size:.85rem;margin-bottom:1.8rem;letter-spacing:.04em}
+  .pw-input{width:100%;padding:.75rem 1rem;border:1.5px solid rgba(255,255,255,.2);border-radius:12px;background:rgba(255,255,255,.1);color:var(--snow);font-family:'DM Sans',sans-serif;font-size:1.1rem;text-align:center;letter-spacing:.15em;outline:none;transition:border-color .2s;margin-bottom:.5rem}
+  .pw-input::placeholder{color:rgba(255,255,255,.3);letter-spacing:.05em}
+  .pw-input:focus{border-color:var(--gold)}
+  .pw-input.err{border-color:var(--rust);animation:shake .3s ease}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .pw-btn{width:100%;padding:.75rem;background:var(--gold);color:var(--midnight);border:none;border-radius:12px;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:.3rem}
+  .pw-btn:hover{background:#b8862e;transform:translateY(-1px)}
+  .pw-err{color:var(--rust);font-size:.82rem;margin-top:.5rem;height:1.2rem}
+
+</style>
+</head>
+<body>
+
+
+<div class="pw-screen" id="pwScreen">
+  <div class="pw-box">
+    <span class="icon">⛷️</span>
+    <h2>Westendorf</h2>
+    <p>Bitte Passwort eingeben</p>
+    <input class="pw-input" type="password" id="pwInput" placeholder="Passwort" onkeydown="if(event.key==='Enter')checkPw()">
+    <button class="pw-btn" onclick="checkPw()">Weiter →</button>
+    <div class="pw-err" id="pwErr"></div>
+  </div>
+</div>
+
+<div class="flakes" id="flakes"></div>
+
+<header>
+  <span class="icon">⛷️</span>
+  <h1>Westendorf<br><span>Restaurantbewertungen</span></h1>
+  <p>Skiurlaub · Kitzbüheler Alpen</p>
+</header>
+
+<div class="year-bar">
+  <button class="ybtn active" data-year="2027" onclick="setYear(this)">2027</button>
+  <button class="ybtn" data-year="2028" onclick="setYear(this)">2028</button>
+  <button class="ybtn" data-year="2029" onclick="setYear(this)">2029</button>
+</div>
+
+<main>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('bewerten')">⭐ Bewerten</div>
+    <div class="tab" onclick="showTab('restaurants')">🍽️ Restaurants</div>
+    <div class="tab" onclick="showTab('archiv')">📚 Archiv</div>
+  </div>
+
+  <!-- BEWERTEN -->
+  <div class="panel active" id="tab-bewerten">
+    <div class="box">
+      <div class="row" style="margin-bottom:.6rem">
+        <div class="fg f">
+          <label>Dein Name</label>
+          <select id="selName">
+            <option value="">– Name wählen –</option>
+            <option>Christiane</option><option>Frank</option><option>Sonja</option>
+            <option>Tobi</option><option>Stephi</option><option>Daniel</option>
+            <option>Anton</option><option>Kathi</option><option>Andi</option>
+          </select>
+        </div>
+        <div class="fg f">
+          <label>Restaurant</label>
+          <select id="selRest"><option value="">– Restaurant wählen –</option></select>
+        </div>
+      </div>
+      <button class="btn gold" onclick="openModal()">Bewertung abgeben →</button>
+    </div>
+    <div class="grid" id="quickCards"></div>
+  </div>
+
+  <!-- RESTAURANTS -->
+  <div class="panel" id="tab-restaurants">
+    <div class="box">
+      <h3>🆕 Neues Restaurant hinzufügen</h3>
+      <div class="row" style="margin-bottom:.6rem">
+        <div class="fg f"><label>Name</label><input type="text" id="newName" placeholder="Restaurantname"></div>
+        <div class="fg f"><label>Kategorie</label>
+          <select id="newCat">
+            <option>Hütte</option><option>Restaurant</option><option>Après-Ski Bar</option>
+            <option>Pizzeria</option><option>Steakhouse</option><option>Sonstiges</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" onclick="addRest()">Hinzufügen ✓</button>
+    </div>
+    <div class="grid" id="restList"></div>
+  </div>
+
+  <!-- ARCHIV -->
+  <div class="panel" id="tab-archiv">
+    <div class="filters">
+      <select class="fsel" id="fYear" onchange="renderArchiv()">
+        <option value="">Alle Jahre</option>
+        <option>2027</option><option>2028</option><option>2029</option>
+      </select>
+      <select class="fsel" id="fRest" onchange="renderArchiv()"><option value="">Alle Restaurants</option></select>
+      <select class="fsel" id="fName" onchange="renderArchiv()"><option value="">Alle Bewerter</option></select>
+    </div>
+    <div id="archivList"></div>
+  </div>
+</main>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="mhead">
+      <div><h2 id="mTitle">–</h2><div class="sub">Jahr <span id="mYear">2027</span></div></div>
+      <button class="mclose" onclick="closeModal()">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="who">👤 <strong id="mName">–</strong></div>
+
+      <div class="sec">
+        <div class="sec-title">🍽️ Allgemeiner Eindruck</div>
+        <div class="fg"><label>Gesamteindruck</label>
+          <div class="stars"><input type="radio" name="g" id="g5" value="5"><label for="g5">★</label><input type="radio" name="g" id="g4" value="4"><label for="g4">★</label><input type="radio" name="g" id="g3" value="3"><label for="g3">★</label><input type="radio" name="g" id="g2" value="2"><label for="g2">★</label><input type="radio" name="g" id="g1" value="1"><label for="g1">★</label></div>
+        </div>
+        <div class="fg"><label>Service</label>
+          <div class="stars"><input type="radio" name="sv" id="sv5" value="5"><label for="sv5">★</label><input type="radio" name="sv" id="sv4" value="4"><label for="sv4">★</label><input type="radio" name="sv" id="sv3" value="3"><label for="sv3">★</label><input type="radio" name="sv" id="sv2" value="2"><label for="sv2">★</label><input type="radio" name="sv" id="sv1" value="1"><label for="sv1">★</label></div>
+        </div>
+        <div class="fg"><label>Atmosphäre</label>
+          <div class="stars"><input type="radio" name="at" id="at5" value="5"><label for="at5">★</label><input type="radio" name="at" id="at4" value="4"><label for="at4">★</label><input type="radio" name="at" id="at3" value="3"><label for="at3">★</label><input type="radio" name="at" id="at2" value="2"><label for="at2">★</label><input type="radio" name="at" id="at1" value="1"><label for="at1">★</label></div>
+        </div>
+        <div class="fg"><label>Preis / Leistung</label>
+          <div class="stars"><input type="radio" name="pr" id="pr5" value="5"><label for="pr5">★</label><input type="radio" name="pr" id="pr4" value="4"><label for="pr4">★</label><input type="radio" name="pr" id="pr3" value="3"><label for="pr3">★</label><input type="radio" name="pr" id="pr2" value="2"><label for="pr2">★</label><input type="radio" name="pr" id="pr1" value="1"><label for="pr1">★</label></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title">🥗 Vorspeise <small style="font-size:.78rem;font-weight:300;color:#999">(optional)</small></div>
+        <div class="fg"><label>Gericht</label><input type="text" id="vN" placeholder="z.B. Lachstatar"></div>
+        <div class="fg"><label>Bewertung</label>
+          <div class="stars"><input type="radio" name="vs" id="vs5" value="5"><label for="vs5">★</label><input type="radio" name="vs" id="vs4" value="4"><label for="vs4">★</label><input type="radio" name="vs" id="vs3" value="3"><label for="vs3">★</label><input type="radio" name="vs" id="vs2" value="2"><label for="vs2">★</label><input type="radio" name="vs" id="vs1" value="1"><label for="vs1">★</label></div>
+        </div>
+        <div class="fg"><label>Kommentar</label><textarea id="vK" rows="2" placeholder="Kommentar…"></textarea></div>
+
+      </div>
+
+      <div class="sec">
+        <div class="sec-title">🥩 Hauptspeise</div>
+        <div class="fg"><label>Gericht</label><input type="text" id="hN" placeholder="z.B. Wiener Schnitzel"></div>
+        <div class="fg"><label>Bewertung</label>
+          <div class="stars"><input type="radio" name="hs" id="hs5" value="5"><label for="hs5">★</label><input type="radio" name="hs" id="hs4" value="4"><label for="hs4">★</label><input type="radio" name="hs" id="hs3" value="3"><label for="hs3">★</label><input type="radio" name="hs" id="hs2" value="2"><label for="hs2">★</label><input type="radio" name="hs" id="hs1" value="1"><label for="hs1">★</label></div>
+        </div>
+        <div class="fg"><label>Kommentar</label><textarea id="hK" rows="2" placeholder="Kommentar…"></textarea></div>
+
+      </div>
+
+      <div class="sec">
+        <div class="sec-title">🍮 Nachtisch <small style="font-size:.78rem;font-weight:300;color:#999">(optional)</small></div>
+        <div class="fg"><label>Gericht</label><input type="text" id="nN" placeholder="z.B. Kaiserschmarrn"></div>
+        <div class="fg"><label>Bewertung</label>
+          <div class="stars"><input type="radio" name="ns" id="ns5" value="5"><label for="ns5">★</label><input type="radio" name="ns" id="ns4" value="4"><label for="ns4">★</label><input type="radio" name="ns" id="ns3" value="3"><label for="ns3">★</label><input type="radio" name="ns" id="ns2" value="2"><label for="ns2">★</label><input type="radio" name="ns" id="ns1" value="1"><label for="ns1">★</label></div>
+        </div>
+        <div class="fg"><label>Kommentar</label><textarea id="nK" rows="2" placeholder="Kommentar…"></textarea></div>
+
+      </div>
+
+      <div class="sec">
+        <div class="sec-title">💬 Abschluss</div>
+        <div class="fg"><label>Allgemeiner Kommentar</label><textarea id="aK" rows="3" placeholder="Weitere Anmerkungen…"></textarea></div>
+        <div class="fg"><label>Weiterempfehlung?</label>
+          <select id="empf">
+            <option value="">– Auswahl –</option>
+            <option value="ja">👍 Ja, unbedingt!</option>
+            <option value="eher-ja">🤙 Eher ja</option>
+            <option value="eher-nein">🤷 Eher nein</option>
+            <option value="nein">👎 Nein</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="submit" id="submitBtn" onclick="submitRating()">Bewertung speichern ✓</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbzmHb-MNSAnmqpGg29S30SwVVpO3XNyx5epxHyIfyhlP9SGB7Rx7uibdeFZ6Lz82CXL/exec';
+
+// ── API: alles über GET (exakt wie Rezept-Organizer) ─────────────────────
+async function apiGet(params) {
+  if (!API) return null;
+  const url = API + '?' + new URLSearchParams(params).toString() + '&t=' + Date.now();
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer'
+    });
+    return await res.json();
+  } catch(e) {
+    console.warn('Sheets API Fehler:', e);
+    return null;
+  }
+}
+
+let year = '2027';
+let curRest = null;
+let ratings = [];
+let rid = 1;
+
+let syncStatus = '';
+
+let rests = [
+  {id:1,name:'Brechhornhaus',cat:'Hütte'},
+  {id:2,name:'Il Vagabondo',cat:'Pizzeria'},
+  {id:3,name:'Post',cat:'Restaurant'},
+  {id:4,name:'Reiterstüberl',cat:'Restaurant'},
+  {id:5,name:'Schermer',cat:'Restaurant'},
+  {id:6,name:'Schrandlhof',cat:'Hütte'},
+  {id:7,name:'Stimmlach',cat:'Hütte'},
+  {id:8,name:'Talkaser',cat:'Hütte'},
+  {id:9,name:'Winnaberg',cat:'Hütte'},
+];
+
+// Snow
+(()=>{const c=document.getElementById('flakes');for(let i=0;i<26;i++){const s=document.createElement('div');s.className='flake';s.textContent=['❄','❅','❆'][i%3];s.style.cssText=`left:${Math.random()*100}vw;font-size:${.6+Math.random()}em;animation-duration:${6+Math.random()*10}s;animation-delay:${Math.random()*10}s;opacity:${.4+Math.random()*.5}`;c.appendChild(s);}})();
+
+// Helpers
+const $=id=>document.getElementById(id);
+const v=id=>$(id)?.value.trim()||'';
+const star=n=>n?'★'.repeat(n)+'☆'.repeat(5-n):'–';
+const getStar=name=>{const c=document.querySelector(`input[name="${name}"]:checked`);return c?+c.value:null;};
+const avg=(id)=>{const rs=ratings.filter(r=>r.rid===id&&r.year===year&&r.g);if(!rs.length)return null;return(rs.reduce((a,b)=>a+b.g,0)/rs.length).toFixed(1);};
+
+function toast(msg,err){const t=$('toast');t.textContent=msg;t.style.background=err?'var(--rust)':'var(--pine)';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// Year
+function setYear(btn){document.querySelectorAll('.ybtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');year=btn.dataset.year;render();}
+
+// Tabs
+function showTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['bewerten','restaurants','archiv'][i]===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  $('tab-'+id).classList.add('active');
+  if(id==='archiv')renderArchiv();
+}
+
+// Selects
+function fillSelects(){
+  const sr=$('selRest'),cur=sr.value;
+  sr.innerHTML='<option value="">– Restaurant wählen –</option>';
+  rests.forEach(r=>{const o=document.createElement('option');o.value=r.id;o.textContent=`${r.name} (${r.cat})`;sr.appendChild(o);});
+  sr.value=cur;
+  const fr=$('fRest');fr.innerHTML='<option value="">Alle Restaurants</option>';
+  rests.forEach(r=>{const o=document.createElement('option');o.value=r.id;o.textContent=r.name;fr.appendChild(o);});
+}
+
+// Render quick cards
+function renderCards(){
+  const g=$('quickCards');g.innerHTML='';fillSelects();
+  rests.forEach(r=>{
+    const a=avg(r.id),cnt=ratings.filter(x=>x.rid===r.id&&x.year===year).length;
+    const d=document.createElement('div');d.className='card';
+    d.innerHTML=`<h3>${r.name}</h3><div class="cat">${r.cat}</div>
+      <div style="margin-bottom:.6rem">${a?`<span class="sd">${star(Math.round(a))}</span> <span style="font-size:.78rem;color:#888">${a}/5 · ${cnt} Bew.</span>`:'<span style="color:#aaa;font-size:.8rem">Noch keine Bewertungen</span>'}</div>
+      <button class="btn" onclick="quickRate(${r.id})">Jetzt bewerten</button>`;
+    g.appendChild(d);
+  });
+}
+
+// Render restaurant list
+function renderRestList(){
+  const l=$('restList');l.innerHTML='';
+  const cats=['Hütte','Restaurant','Après-Ski Bar','Pizzeria','Steakhouse','Sonstiges'];
+  rests.forEach(r=>{
+    const a=avg(r.id),cnt=ratings.filter(x=>x.rid===r.id&&x.year===year).length;
+    const opts=cats.map(c=>`<option${c===r.cat?' selected':''}>${c}</option>`).join('');
+    const d=document.createElement('div');d.className='card';
+    d.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div><h3 id="nd${r.id}">${r.name}</h3><div class="cat" id="cd${r.id}">${r.cat}</div></div>
+        <div style="display:flex;gap:.35rem">
+          <button class="icon-btn e" onclick="startEdit(${r.id})">✏️</button>
+          <button class="icon-btn d" onclick="delRest(${r.id})">🗑️</button>
+        </div>
+      </div>
+      <div id="ef${r.id}" style="display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid #e0e8f0">
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">
+          <input type="text" id="en${r.id}" value="${r.name}" style="flex:1;min-width:130px">
+          <select id="ec${r.id}" style="flex:1;min-width:110px">${opts}</select>
+        </div>
+        <div style="display:flex;gap:.4rem">
+          <button class="btn" onclick="saveEdit(${r.id})">Speichern ✓</button>
+          <button class="btn outline" onclick="cancelEdit(${r.id})">Abbrechen</button>
+        </div>
+      </div>
+      <div style="margin-top:.5rem">${a?`<span class="sd">${star(Math.round(a))}</span> <span style="font-size:.78rem;color:#888">${a}/5 · ${cnt} Bew.</span>`:'<span style="color:#aaa;font-size:.8rem">Keine Bewertungen</span>'}</div>`;
+    l.appendChild(d);
+  });
+}
+
+function startEdit(id){$(`ef${id}`).style.display='block';$(`nd${id}`).style.opacity='.35';$(`cd${id}`).style.opacity='.35';}
+function cancelEdit(id){$(`ef${id}`).style.display='none';$(`nd${id}`).style.opacity='1';$(`cd${id}`).style.opacity='1';}
+function saveEdit(id){
+  const r=rests.find(x=>x.id===id),n=$(`en${id}`).value.trim();
+  if(!n){toast('Name darf nicht leer sein!',true);return;}
+  r.name=n;r.cat=$(`ec${id}`).value;render();toast('✓ Gespeichert!');
+}
+function delRest(id){
+  const r=rests.find(x=>x.id===id);
+  if(!confirm(`„${r.name}" wirklich löschen?`))return;
+  rests=rests.filter(x=>x.id!==id);render();toast('Restaurant gelöscht.');
+}
+function addRest(){
+  const name=$('newName').value.trim();
+  if(!name){toast('Bitte Namen eingeben!',true);return;}
+  rests.push({id:Date.now(),name,cat:$('newCat').value});
+  $('newName').value='';render();toast('✓ Restaurant hinzugefügt!');
+}
+
+function render(){renderCards();renderRestList();fillSelects();}
+
+// Modal
+function quickRate(id){$('selRest').value=id;openModal();}
+function openModal(){
+  const rid=+v('selRest'),name=v('selName');
+  if(!rid){toast('Bitte Restaurant wählen!',true);return;}
+  if(!name){toast('Bitte Namen wählen!',true);return;}
+  curRest=rests.find(x=>x.id===rid);photos={v:[],h:[],n:[]};
+  $('mTitle').textContent=curRest.name;
+  $('mName').textContent=name;
+  $('mYear').textContent=year;
+  document.querySelectorAll('.modal input[type=radio]').forEach(i=>i.checked=false);
+  document.querySelectorAll('.modal input[type=text],.modal textarea').forEach(i=>i.value='');
+  document.querySelectorAll('.modal select').forEach(i=>i.selectedIndex=0);
+  $('overlay').classList.add('open');
+}
+function closeModal(){$('overlay').classList.remove('open');}
+$('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))closeModal();});
+
+
+
+// Submit
+async function submitRating(){
+  const g=getStar('g');
+  if(!g){toast('Bitte Gesamteindruck bewerten!',true);return;}
+  const btn=$('submitBtn');btn.textContent='Wird gespeichert…';btn.disabled=true;
+
+  const id = rid++;
+  const date = new Date().toLocaleDateString('de-DE');
+  const bewerter = v('selName');
+
+  const rating={
+    id, year, date,
+    bewerter, rid:curRest.id, restaurantName:curRest.name, restaurantId:curRest.id,
+    gesamt:g, service:getStar('sv'), atmo:getStar('at'), preis:getStar('pr'),
+    vorspeise:{name:v('vN'),sterne:getStar('vs'),kommentar:v('vK')},
+    haupt:    {name:v('hN'),sterne:getStar('hs'),kommentar:v('hK')},
+    nachtisch:{name:v('nN'),sterne:getStar('ns'),kommentar:v('nK')},
+    kommentar:v('aK'), empfehlung:v('empf')
+  };
+
+  // Save to Sheet via GET (same method as LTB Monitor)
+  const res = await apiGet({
+    action: 'saveRating',
+    id, year, date, bewerter,
+    restaurantName: curRest.name,
+    restaurantId: curRest.id,
+    gesamt: g,
+    service: getStar('sv')||'',
+    atmo: getStar('at')||'',
+    preis: getStar('pr')||'',
+    vorspeiseName: v('vN'), vorspeiseSterne: getStar('vs')||'', vorspeisenKom: v('vK'),
+    hauptName: v('hN'), hauptSterne: getStar('hs')||'', hauptKom: v('hK'),
+    nachtischName: v('nN'), nachtischSterne: getStar('ns')||'', nachtischKom: v('nK'),
+    kommentar: v('aK'), empfehlung: v('empf'),
+    fotos: ''
+  });
+
+  if(res && res.ok) {
+    toast('✓ Bewertung in Google Sheet gespeichert!');
+  } else {
+    toast('⚠️ Gespeichert, aber Sheet-Sync unsicher', true);
+  }
+
+  ratings.push({...rating, g, rid:curRest.id});
+  closeModal();render();renderArchiv();updateNameFilter();
+  btn.textContent='Bewertung speichern ✓';btn.disabled=false;
+}
+
+// Load ratings from Sheet on startup
+async function loadRatings(){
+  const rows = await apiGet({action:'getRatings'});
+  if(!rows||!Array.isArray(rows)) return;
+  ratings = rows.map((r,i)=>({
+    id: i+1,
+    year: String(r['Jahr']||r.year||''),
+    date: String(r['Datum']||r.date||''),
+    bewerter: String(r['Bewerter']||r.bewerter||''),
+    rid: Number(r['RestaurantID']||r.restaurantId||0),
+    restaurantName: String(r['Restaurant']||r.restaurantName||''),
+    restaurantId: Number(r['RestaurantID']||r.restaurantId||0),
+    gesamt: Number(r['Gesamt']||r.gesamt||0),
+    g: Number(r['Gesamt']||r.gesamt||0),
+    service: Number(r['Service']||r.service||0)||null,
+    atmo: Number(r['Atmosphäre']||r.atmo||0)||null,
+    preis: Number(r['Preis/Leistung']||r.preis||0)||null,
+    vorspeise:{name:String(r['Vorspeise']||''),sterne:Number(r['Vorspeise Sterne']||0)||null,kommentar:String(r['Vorspeise Kommentar']||'')},
+    haupt:    {name:String(r['Hauptspeise']||''),sterne:Number(r['Hauptspeise Sterne']||0)||null,kommentar:String(r['Hauptspeise Kommentar']||'')},
+    nachtisch:{name:String(r['Nachtisch']||''),sterne:Number(r['Nachtisch Sterne']||0)||null,kommentar:String(r['Nachtisch Kommentar']||'')},
+    kommentar: String(r['Kommentar']||''),
+    empfehlung: String(r['Empfehlung']||''),
+    fotoLinks: []
+  })).filter(r=>r.gesamt>0);
+  const maxId = Math.max(...ratings.map(r=>r.id),0);
+  rid = maxId+1;
+  render();renderArchiv();updateNameFilter();
+}
+
+// Archiv
+function renderArchiv(){
+  const yF=v('fYear'),rF=v('fRest'),nF=v('fName');
+  let list=ratings.filter(r=>{
+    if(yF&&r.year!==yF)return false;
+    if(rF&&r.rid!==+rF)return false;
+    if(nF&&r.bewerter!==nF)return false;
+    return true;
+  }).sort((a,b)=>b.id-a.id);
+  const el=$('archivList');
+  if(!list.length){el.innerHTML='<div class="empty"><div class="ei">📭</div><p>Noch keine Bewertungen</p></div>';return;}
+  const em={ja:'👍 Ja!','eher-ja':'🤙 Eher ja','eher-nein':'🤷 Eher nein',nein:'👎 Nein'};
+  el.innerHTML=list.map(r=>`
+    <div class="entry">
+      <div class="ehead">
+        <div><h3>${r.restaurantName}</h3><div class="emeta">von ${r.bewerter} · ${r.date} · <span class="badge">${r.year}</span></div></div>
+        <div style="text-align:right"><div class="sd" style="font-size:1.1rem">${star(r.gesamt)}</div><div style="font-size:.72rem;color:#888">Gesamt</div></div>
+      </div>
+      <div class="subs">
+        ${r.service?`<div class="sub"><div class="sublbl">Service</div><span class="sd">${star(r.service)}</span></div>`:''}
+        ${r.atmo?`<div class="sub"><div class="sublbl">Atmosphäre</div><span class="sd">${star(r.atmo)}</span></div>`:''}
+        ${r.preis?`<div class="sub"><div class="sublbl">Preis/Leistung</div><span class="sd">${star(r.preis)}</span></div>`:''}
+      </div>
+      ${(r.vorspeise?.name||r.haupt?.name||r.nachtisch?.name)?`<div class="courses">
+        ${r.vorspeise?.name?`<div class="ci"><div class="clbl">Vorspeise</div><strong>${r.vorspeise.name}</strong>${r.vorspeise.sterne?` <span class="sd">${star(r.vorspeise.sterne)}</span>`:''}</div>`:''}
+        ${r.haupt?.name?`<div class="ci"><div class="clbl">Hauptspeise</div><strong>${r.haupt.name}</strong>${r.haupt.sterne?` <span class="sd">${star(r.haupt.sterne)}</span>`:''}</div>`:''}
+        ${r.nachtisch?.name?`<div class="ci"><div class="clbl">Nachtisch</div><strong>${r.nachtisch.name}</strong>${r.nachtisch.sterne?` <span class="sd">${star(r.nachtisch.sterne)}</span>`:''}</div>`:''}
+      </div>`:''}
+      ${r.kommentar?`<div style="margin-top:.5rem;font-size:.81rem;color:#555;font-style:italic">"${r.kommentar}"</div>`:''}
+      ${r.empfehlung?`<div style="margin-top:.35rem;font-size:.78rem">Empfehlung: <strong>${em[r.empfehlung]||''}</strong></div>`:''}
+    </div>`).join('');
+}
+
+function updateNameFilter(){
+  const s=$('fName'),cur=s.value;
+  const names=[...new Set(ratings.map(r=>r.bewerter))];
+  s.innerHTML='<option value="">Alle Bewerter</option>';
+  names.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o);});
+  s.value=cur;
+}
+
+// ── Passwort ──────────────────────────────────────────────────────────────
+(function(){
+  if(sessionStorage.getItem('wendo_auth')==='1'){
+    document.getElementById('pwScreen').style.display='none';
+  }
+})();
+
+function checkPw(){
+  const input = document.getElementById('pwInput');
+  const err   = document.getElementById('pwErr');
+  if(input.value === 'Martina'){
+    sessionStorage.setItem('wendo_auth','1');
+    document.getElementById('pwScreen').style.display='none';
+    err.textContent='';
+  } else {
+    input.classList.add('err');
+    err.textContent='Falsches Passwort';
+    input.value='';
+    setTimeout(()=>input.classList.remove('err'),400);
+  }
+}
+
+// Init
+render();
+loadRatings();
+</script>
+</body>
+</html>
