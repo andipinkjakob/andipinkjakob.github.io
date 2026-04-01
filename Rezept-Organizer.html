@@ -1518,61 +1518,85 @@ function syncVorrat(item, action) {
 async function tryLoadFromSheets() {
   if (!SCRIPT_URL) return;
 
+  // Kategorien laden
   const catData = await apiGet({ sheet: 'kategorien' });
   if (catData && Array.isArray(catData) && catData.length > 0) {
     categories = catData.map(r=>({
-      id: r.id||'', label: r.label||'', emoji: r.emoji||'🍳',
-      color: r.color||'#666', bg: r.bg||'#eee'
+      id:    r.id    || r.ID    || '',
+      label: r.label || r.Label || '',
+      emoji: r.emoji || r.Emoji || '🍳',
+      color: r.color || r.Color || '#666',
+      bg:    r.bg    || r.Bg    || '#eee'
     }));
     saveCategories(); renderSidebar();
   }
 
+  // Rezepte laden — immer aus Sheet, unabhängig vom localStorage-Stand
   const recData = await apiGet({ sheet: 'rezepte' });
-  if (recData && Array.isArray(recData) && recData.length > 0) {
-    recipes = recData.map(row=>({
-      id: String(row.id||Date.now()),
-      name: row.name||'',
-      tags: row.tags ? row.tags.split(',').map(t=>t.trim()).filter(Boolean) : [],
-      ingredients: (row.zutaten||'').split(';').filter(Boolean).map(z=>{
-        const p=z.trim().split(' ');
-        return {amount:p[0]||'', unit:p[1]||'', name:p.slice(2).join(' ')};
-      }),
-      preparation: row.zubereitung||'',
-      portions: parseInt(row.portionen)||1,
-      ig: row.ig||'',
-      ratingKathi: parseInt(row.bewertungkathi)||0,
-      ratingAndi:  parseInt(row.bewertungandi)||0,
-      emoji: RECIPE_EMOJIS[Math.floor(Math.random()*RECIPE_EMOJIS.length)],
-      date: row.datum||''
-    }));
-    save(); renderSidebar(); renderGrid();
+  if (recData && Array.isArray(recData)) {
+    if (recData.length > 0) {
+      recipes = recData.map(row=>{
+        // Tolerant gegenüber Groß-/Kleinschreibung der Spaltenköpfe
+        const g = k => row[k] || row[k.toLowerCase()] || row[k.toUpperCase()] || '';
+        return {
+          id:          String(g('id')||Date.now()),
+          name:        g('name'),
+          tags:        g('tags') ? g('tags').split(',').map(t=>t.trim()).filter(Boolean) : [],
+          ingredients: (g('zutaten')||'').split(';').filter(Boolean).map(z=>{
+            const p=z.trim().split(' ');
+            return {amount:p[0]||'', unit:p[1]||'', name:p.slice(2).join(' ')};
+          }),
+          preparation: g('zubereitung'),
+          portions:    parseInt(g('portionen'))||1,
+          ig:          g('ig'),
+          ratingKathi: parseInt(g('bewertungkathi'))||0,
+          ratingAndi:  parseInt(g('bewertungandi'))||0,
+          emoji:       RECIPE_EMOJIS[Math.floor(Math.random()*RECIPE_EMOJIS.length)],
+          date:        g('datum')
+        };
+      });
+      save(); renderSidebar(); renderGrid();
+      showToast(`✅ ${recipes.length} Rezept${recipes.length!==1?'e':''} geladen`, 'success');
+    } else {
+      showToast('⚠️ Sheet verbunden, aber keine Rezepte gefunden', '');
+    }
+  } else {
+    showToast('⚠️ Sheets nicht erreichbar', 'error');
   }
 
+  // Wochenplan laden
   const wpData = await apiGet({ sheet: 'wochenplan' });
   if (wpData && Array.isArray(wpData) && wpData.length > 0) {
     mealPlan = {};
     wpData.forEach(row=>{
-      if (row.slotkey && row.rezeptid) {
-        mealPlan[row.slotkey] = {id: String(row.rezeptid), portions: parseInt(row.portionen)||1};
+      const slotkey  = row.slotkey  || row.SlotKey  || '';
+      const rezeptid = row.rezeptid || row.RezeptID || '';
+      const portionen= row.portionen|| row.Portionen|| 1;
+      if (slotkey && rezeptid) {
+        mealPlan[slotkey] = {id: String(rezeptid), portions: parseInt(portionen)||1};
       }
     });
     saveMealPlan(); renderWeekPlan();
   }
 
+  // MHD laden
   const mhdData = await apiGet({ sheet: 'mhd' });
   if (mhdData && Array.isArray(mhdData) && mhdData.length > 0) {
     mhdItems = mhdData.map(row=>({
-      id: String(row.id||'mhd_'+Date.now()),
-      name: row.name||'', date: row.date||''
+      id:   String(row.id   || row.ID   || 'mhd_'+Date.now()),
+      name: row.name || row.Name || '',
+      date: row.date || row.Date || ''
     }));
     saveMhdLocal(); renderMhd();
   }
 
+  // Vorrat laden
   const vorratData = await apiGet({ sheet: 'vorrat' });
   if (vorratData && Array.isArray(vorratData) && vorratData.length > 0) {
     vorratItems = vorratData.map(row=>({
-      id: String(row.id||'v_'+Date.now()),
-      name: row.name||'', qty: parseInt(row.qty)||0
+      id:  String(row.id  || row.ID  || 'v_'+Date.now()),
+      name: row.name || row.Name || '',
+      qty:  parseInt(row.qty || row.Qty || 0)
     }));
     saveVorratLocal(); renderVorrat();
   }
