@@ -305,7 +305,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'https://script.google.com/macros/s/AKfycbyxFRaouhYwUpY1-_sQag16If_VBv7soUnPF5oSrx46r7XrNJnD0S1PI72VXxqdVU9p8Q/exec';
+const API = 'https://script.google.com/macros/s/AKfycbzJ4hzW0ygHMbbF6J2VxctchyzxTSDhN0wso0FFJty_f0WEC1xc3z88uqlzqlBtO30BRg/exec';
 
 // ── API: alles über GET (exakt wie Rezept-Organizer V2.4) ────────────────
 async function apiGet(params) {
@@ -530,10 +530,9 @@ async function loadRatings(){
     year: String(r['Jahr']||r.year||''),
     date: String(r['Datum']||r.date||''),
     bewerter: String(r['Bewerter']||r.bewerter||''),
-    rid: Number(r['RestaurantID']||r.restaurantId||0),
     restaurantName: String(r['Restaurant']||r.restaurantName||''),
     restName: String(r['Restaurant']||r.restaurantName||''),
-    restaurantId: Number(r['RestaurantID']||r.restaurantId||0),
+    rid: Number(r['RestaurantID']||r.restaurantId||0),
     gesamt: Number(r['Gesamt']||r.gesamt||0),
     g: Number(r['Gesamt']||r.gesamt||0),
     service: Number(r['Service']||r.service||0)||null,
