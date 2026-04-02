@@ -395,12 +395,7 @@
   .fin-show-more:hover { border-color:var(--accent); color:var(--accent); background:rgba(79,142,247,.06); }
 
   /* ── Bestände ── */
-  .fin-balances-wrap { border-top:1px solid var(--border); padding-top:4px; }
-  .fin-balances-head { display:flex; align-items:center; justify-content:space-between; padding:6px 0; cursor:pointer; user-select:none; }
-  .fin-balances-head:hover .fin-list-title { color:var(--text); }
-  .fin-balances-chevron { font-size:11px; color:var(--text-dim); transition:transform .2s; }
-  .fin-balances-chevron.open { transform:rotate(180deg); }
-  .fin-balances-body { display:flex; flex-direction:column; gap:10px; padding-top:6px; }
+  .fin-balances-wrap { border-top:1px solid var(--border); padding-top:12px; display:flex; flex-direction:column; gap:10px; }
   .fin-balances-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .fin-bal-item { display:flex; flex-direction:column; gap:5px; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
   .fin-bal-label { font-size:10px; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase; }
@@ -735,54 +730,59 @@
 
     <!-- Bestände -->
     <div class="fin-balances-wrap">
-      <div class="fin-balances-head" id="finBalancesHead">
-        <span class="fin-list-title">Bestände</span>
-        <span class="fin-balances-chevron" id="finBalancesChevron">▾</span>
-      </div>
-      <div class="fin-balances-body" id="finBalancesBody" style="display:none">
-        <div class="fin-balances-grid">
+      <div class="fin-list-title" style="margin-bottom:8px;">Bestände</div>
+      <div class="fin-balances-grid">
 
-          <div class="fin-bal-item">
-            <div class="fin-bal-label">BTC L1</div>
-            <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill" id="balBarL1" style="width:0%"></div></div>
-            <div class="fin-bal-row">
-              <input type="number" class="fin-bal-input" id="balL1" placeholder="0.00000000" step="0.00000001">
-              <span class="fin-bal-target">/ 0.1 BTC</span>
-              <button class="fin-bal-save" data-key="balL1">✓</button>
-            </div>
+        <div class="fin-bal-item">
+          <div class="fin-bal-label">BTC L1</div>
+          <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill" id="balBarL1" style="width:0%"></div></div>
+          <div class="fin-bal-row">
+            <input type="number" class="fin-bal-input" id="balL1" placeholder="0.00000000" step="0.00000001">
+            <span class="fin-bal-target">/ 0.1 BTC</span>
+            <button class="fin-bal-save" data-key="balL1">✓</button>
           </div>
-
-          <div class="fin-bal-item">
-            <div class="fin-bal-label">BTC L2</div>
-            <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill" id="balBarL2" style="width:0%"></div></div>
-            <div class="fin-bal-row">
-              <input type="number" class="fin-bal-input" id="balL2" placeholder="0.00000000" step="0.00000001">
-              <span class="fin-bal-target">/ 1.0 BTC</span>
-              <button class="fin-bal-save" data-key="balL2">✓</button>
-            </div>
-          </div>
-
-          <div class="fin-bal-item">
-            <div class="fin-bal-label">BTC L3</div>
-            <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill" id="balBarL3" style="width:0%"></div></div>
-            <div class="fin-bal-row">
-              <input type="number" class="fin-bal-input" id="balL3" placeholder="0.00000000" step="0.00000001">
-              <span class="fin-bal-target">/ 1.0 BTC</span>
-              <button class="fin-bal-save" data-key="balL3">✓</button>
-            </div>
-          </div>
-
-          <div class="fin-bal-item">
-            <div class="fin-bal-label">Neteller</div>
-            <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill fin-bal-bar-eur" id="balBarNeteller" style="width:0%"></div></div>
-            <div class="fin-bal-row">
-              <input type="number" class="fin-bal-input" id="balNeteller" placeholder="0" step="1">
-              <span class="fin-bal-target">/ 5.000 €</span>
-              <button class="fin-bal-save" data-key="balNeteller">✓</button>
-            </div>
-          </div>
-
         </div>
+
+        <div class="fin-bal-item">
+          <div class="fin-bal-label">BTC L2</div>
+          <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill" id="balBarL2" style="width:0%"></div></div>
+          <div class="fin-bal-row">
+            <input type="number" class="fin-bal-input" id="balL2" placeholder="0.00000000" step="0.00000001">
+            <span class="fin-bal-target">/ 1.0 BTC</span>
+            <button class="fin-bal-save" data-key="balL2">✓</button>
+          </div>
+        </div>
+
+        <div class="fin-bal-item">
+          <div class="fin-bal-label">BTC L3</div>
+          <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill" id="balBarL3" style="width:0%"></div></div>
+          <div class="fin-bal-row">
+            <input type="number" class="fin-bal-input" id="balL3" placeholder="0.00000000" step="0.00000001">
+            <span class="fin-bal-target">/ 1.0 BTC</span>
+            <button class="fin-bal-save" data-key="balL3">✓</button>
+          </div>
+        </div>
+
+        <div class="fin-bal-item">
+          <div class="fin-bal-label">Neteller</div>
+          <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill fin-bal-bar-eur" id="balBarNeteller" style="width:0%"></div></div>
+          <div class="fin-bal-row">
+            <input type="number" class="fin-bal-input" id="balNeteller" placeholder="0" step="1">
+            <span class="fin-bal-target">/ 5.000 €</span>
+            <button class="fin-bal-save" data-key="balNeteller">✓</button>
+          </div>
+        </div>
+
+        <div class="fin-bal-item">
+          <div class="fin-bal-label">AC-Balance</div>
+          <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill fin-bal-bar-eur" id="balBarAC" style="width:0%"></div></div>
+          <div class="fin-bal-row">
+            <input type="number" class="fin-bal-input" id="balAC" placeholder="0" step="1">
+            <span class="fin-bal-target">/ 7.000 €</span>
+            <button class="fin-bal-save" data-key="balAC">✓</button>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1460,7 +1460,7 @@
   // ── Bestände (BTC L1/L2/L3 + Neteller) ──────────────────────────────────
   const BAL_KEY   = 'monitor_balances';
   const BAL_SHEET = 'Bestaende';
-  const BAL_TARGETS = { balL1: 0.1, balL2: 1.0, balL3: 1.0, balNeteller: 5000 };
+  const BAL_TARGETS = { balL1: 0.1, balL2: 1.0, balL3: 1.0, balNeteller: 5000, balAC: 7000 };
 
   function loadBalances() {
     try { return JSON.parse(localStorage.getItem(BAL_KEY)) || {}; } catch { return {}; }
@@ -1484,35 +1484,26 @@
   function renderBalances() {
     const bal = loadBalances();
     const configs = [
-      { key:'balL1',      isBtc:true },
-      { key:'balL2',      isBtc:true },
-      { key:'balL3',      isBtc:true },
-      { key:'balNeteller',isBtc:false },
+      { key:'balL1',       isBtc:true  },
+      { key:'balL2',       isBtc:true  },
+      { key:'balL3',       isBtc:true  },
+      { key:'balNeteller', isBtc:false },
+      { key:'balAC',       isBtc:false },
     ];
-    configs.forEach(({ key, isBtc }) => {
+    configs.forEach(({ key }) => {
       const val    = bal[key] || 0;
       const target = BAL_TARGETS[key];
       const pct    = Math.min(100, (val / target) * 100);
       const input  = document.getElementById(key);
       if (input && !input.matches(':focus')) input.value = val || '';
-      const bar = document.getElementById('balBar' + key.replace('bal',''));
+      const barId = 'balBar' + key.charAt(3).toUpperCase() + key.slice(4);
+      const bar   = document.getElementById(barId);
       if (bar) {
         bar.style.width = pct + '%';
         bar.classList.toggle('covered', pct >= 100);
       }
     });
   }
-
-  // Toggle collapse
-  const balHead     = document.getElementById('finBalancesHead');
-  const balBody     = document.getElementById('finBalancesBody');
-  const balChevron  = document.getElementById('finBalancesChevron');
-  let   balExpanded = false;
-  balHead.addEventListener('click', () => {
-    balExpanded = !balExpanded;
-    balBody.style.display   = balExpanded ? '' : 'none';
-    balChevron.classList.toggle('open', balExpanded);
-  });
 
   // Save buttons
   document.querySelectorAll('.fin-bal-save').forEach(btn => {
