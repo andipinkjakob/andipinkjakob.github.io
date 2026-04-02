@@ -398,11 +398,10 @@
     <div class="lock-title">Kathis & Andis<br>Rezeptküche</div>
     <div class="lock-sub">Bitte Passwort eingeben</div>
     <div class="lock-input-wrap">
-      <input type="password" id="lock-input" class="lock-input" placeholder="Passwort"
-        onkeydown="if(event.key==='Enter') unlock()">
-      <button class="lock-toggle" onclick="toggleLockVis()" id="lock-vis-btn" title="Anzeigen">👁️</button>
+      <input type="password" id="lock-input" class="lock-input" placeholder="Passwort">
+      <button class="lock-toggle" id="lock-vis-btn" title="Anzeigen">👁️</button>
     </div>
-    <button class="lock-btn" onclick="unlock()">Einloggen</button>
+    <button class="lock-btn" id="lock-submit-btn">Einloggen</button>
     <div class="lock-error" id="lock-error"></div>
   </div>
 </div>
@@ -1709,6 +1708,13 @@ function toggleLockVis() {
 
 // Check session on load
 document.addEventListener('DOMContentLoaded', () => {
+  // Lock screen event listeners
+  document.getElementById('lock-submit-btn').addEventListener('click', unlock);
+  document.getElementById('lock-vis-btn').addEventListener('click', toggleLockVis);
+  document.getElementById('lock-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') unlock();
+  });
+
   if (sessionStorage.getItem('unlocked')==='1') {
     document.getElementById('lock-screen').style.display='none';
     document.getElementById('app').style.display='block';
