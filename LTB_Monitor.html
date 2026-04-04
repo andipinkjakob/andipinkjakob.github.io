@@ -94,8 +94,8 @@ select.field-err { border-color:var(–negative) !important; }
 .btn-group-label { font-size:10px; color:var(–text-dim); letter-spacing:.1em; text-transform:uppercase; min-width:52px; flex-shrink:0; padding-top:8px; }
 .btn-group { display:grid; gap:5px; flex:1; }
 .btn-group.grid-3 { grid-template-columns: repeat(3, 1fr); }
-.btn-group.grid-4 { grid-template-columns: repeat(4, 1fr); }
-.btn-group.grid-5 { grid-template-columns: repeat(5, 1fr); }
+.btn-group.grid-4 { grid-template-columns: repeat(3, 1fr); }
+.btn-group.grid-5 { grid-template-columns: repeat(3, 1fr); }
 .btn-opt {
 background: var(–bg);
 border: 1px solid var(–border-hi);
@@ -314,7 +314,7 @@ text-align: center;
 .chart-tooltip-val.neg { color:var(–negative); }
 
 /* ── Time Filter (inside chart panel) ── */
-.chart-filter-btns { display:flex; gap:6px; }
+.chart-filter-btns { display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; }
 .btn-filter { background:var(–bg); border:1px solid var(–border-hi); border-radius:8px; color:var(–text-dim); font-family:‘JetBrains Mono’,monospace; font-size:10px; letter-spacing:.07em; padding:6px 12px; cursor:pointer; transition:all .15s; white-space:nowrap; flex:1; text-align:center; }
 .btn-filter:hover { color:var(–text); border-color:var(–accent); }
 .btn-filter.active { background:var(–accent-dim); border-color:var(–accent); color:var(–accent); }
@@ -357,7 +357,7 @@ text-align: center;
 .fin-form { display:flex; flex-direction:column; gap:8px; padding-top:4px; border-top:1px solid var(–border); }
 .fin-form-label { font-size:10px; color:var(–text-dim); letter-spacing:.1em; text-transform:uppercase; }
 .fin-form-row { display:flex; gap:8px; align-items:stretch; flex-wrap:wrap; }
-.fin-btn-group { display:flex; gap:4px; }
+.fin-btn-group { display:flex; gap:4px; flex:1; }
 .fin-type-btn, .fin-plat-btn {
 background:var(–bg); border:1px solid var(–border-hi); border-radius:8px;
 color:var(–text-dim); font-family:‘JetBrains Mono’,monospace; font-size:10px;
@@ -444,7 +444,8 @@ letter-spacing:.05em; padding:8px 12px; cursor:pointer; transition:all .15s; whi
 .goals-form { display:flex; flex-direction:column; gap:8px; padding-top:4px; border-top:1px solid var(–border); }
 .goals-form-label { font-size:10px; color:var(–text-dim); letter-spacing:.1em; text-transform:uppercase; }
 .goals-form-row  { display:flex; gap:6px; align-items:stretch; }
-.goals-form-row2 { display:flex; gap:6px; align-items:center; justify-content:space-between; }
+.goals-form-row2 { display:flex; flex-direction:column; gap:6px; }
+.goals-form-row2-inner { display:flex; gap:6px; align-items:center; }
 .goals-input { background:var(–bg); border:1px solid var(–border-hi); border-radius:8px; color:var(–text); font-family:‘JetBrains Mono’,monospace; font-size:11px; padding:8px 10px; outline:none; transition:border-color .2s; }
 .goals-input:focus { border-color:var(–accent); }
 .goals-input-name   { flex:3; }
@@ -453,12 +454,12 @@ letter-spacing:.05em; padding:8px 12px; cursor:pointer; transition:all .15s; whi
 .goals-input::placeholder { color:var(–text-dim); }
 #goalDate { appearance:none; -webkit-appearance:none; cursor:pointer; color:var(–text-mid); }
 #goalDate:focus { color:var(–text); }
-.goal-type-btn { background:var(–bg); border:1px solid var(–border-hi); border-radius:8px; color:var(–text-dim); font-family:‘JetBrains Mono’,monospace; font-size:10px; letter-spacing:.05em; padding:7px 10px; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.goal-type-btn { flex:1; background:var(–bg); border:1px solid var(–border-hi); border-radius:8px; color:var(–text-dim); font-family:‘JetBrains Mono’,monospace; font-size:10px; letter-spacing:.05em; padding:7px 10px; cursor:pointer; transition:all .15s; white-space:nowrap; text-align:center; }
 .goal-type-btn:hover { border-color:var(–accent); color:var(–text); }
 .goal-type-btn.selected.monthly { background:rgba(79,142,247,.12); border-color:var(–accent); color:var(–accent); font-weight:700; }
 .goal-type-btn.selected.once    { background:rgba(61,214,140,.1);  border-color:var(–positive); color:var(–positive); font-weight:700; }
 .goal-type-btn.selected.maybe   { background:rgba(247,162,79,.1);  border-color:#f7a24f; color:#f7a24f; font-weight:700; }
-.goal-prio-btn { background:var(–bg); border:1px solid var(–border-hi); border-radius:8px; color:var(–text-dim); font-family:‘JetBrains Mono’,monospace; font-size:10px; letter-spacing:.05em; padding:7px 10px; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.goal-prio-btn { flex:1; background:var(–bg); border:1px solid var(–border-hi); border-radius:8px; color:var(–text-dim); font-family:‘JetBrains Mono’,monospace; font-size:10px; letter-spacing:.05em; padding:7px 10px; cursor:pointer; transition:all .15s; white-space:nowrap; text-align:center; }
 .goal-prio-btn:hover { border-color:var(–accent); color:var(–text); }
 .goal-prio-btn.selected.high { background:rgba(247,95,95,.12);  border-color:var(–negative); color:var(–negative); font-weight:700; }
 .goal-prio-btn.selected.mid  { background:rgba(247,162,79,.1);  border-color:#f7a24f;        color:#f7a24f;        font-weight:700; }
@@ -852,17 +853,19 @@ letter-spacing:.05em; padding:8px 12px; cursor:pointer; transition:all .15s; whi
     </select>
   </div>
   <div class="goals-form-row2">
-    <div class="fin-btn-group">
-      <button class="goal-type-btn" data-val="monthly">Monatlich</button>
-      <button class="goal-type-btn" data-val="once">Einmalig</button>
-      <button class="goal-type-btn" data-val="maybe">Eventuell</button>
+    <div class="goals-form-row2-inner">
+      <div class="fin-btn-group" style="flex:1">
+        <button class="goal-type-btn" data-val="monthly">Monatlich</button>
+        <button class="goal-type-btn" data-val="once">Einmalig</button>
+        <button class="goal-type-btn" data-val="maybe">Eventuell</button>
+      </div>
+      <button class="btn-submit" id="goalSubmitBtn" style="height:38px;font-size:11px;flex-shrink:0;">OK</button>
     </div>
     <div class="fin-btn-group">
       <button class="goal-prio-btn" data-val="high">Hoch</button>
       <button class="goal-prio-btn" data-val="mid">Mittel</button>
       <button class="goal-prio-btn" data-val="low">Gering</button>
     </div>
-    <button class="btn-submit" id="goalSubmitBtn" style="height:38px;font-size:11px;">OK</button>
   </div>
   <div class="goals-form-err" id="goalsFormErr"></div>
 </div>
@@ -1239,7 +1242,7 @@ letter-spacing:.05em; padding:8px 12px; cursor:pointer; transition:all .15s; whi
 
   function hashPW(pw) {
     // Simple but sufficient for client-side: use a pre-computed check
-    return pw === '7CF96C7EF49FFE6AF3921B348518C4B9';
+    return pw === '4895';
   }
 
   function isLoggedIn() {
