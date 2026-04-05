@@ -3,11 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0a0f">
 <title>Monitor</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* iOS Safari: Prevent system overrides */
+  input, button, select, textarea { -webkit-appearance: none; appearance: none; }
+  input[type="number"] { -webkit-appearance: none; }
+  button { -webkit-tap-highlight-color: transparent; }
   :root {
+    color-scheme: dark;
     --bg:        #0a0a0f;
     --surface:   #111118;
     --border:    #1e1e2e;
