@@ -332,6 +332,69 @@
   .chart-range-sep { font-size:11px; color:var(--text-dim); flex-shrink:0; }
   .chart-range-label { font-size:10px; color:var(--text-dim); letter-spacing:.08em; text-align:right; align-self:center; white-space:nowrap; }
 
+  /* ── Auszahlungsplanung ── */
+  .pay-panel { width:100%; max-width:640px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px 24px; display:flex; flex-direction:column; gap:16px; }
+
+  .pay-header { display:flex; align-items:flex-start; justify-content:space-between; }
+  .pay-title  { font-family:'Syne',sans-serif; font-weight:800; font-size:15px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); }
+  .pay-sub    { font-size:11px; color:var(--text-dim); letter-spacing:.05em; margin-top:3px; }
+  .pay-ac-wrap { text-align:right; }
+  .pay-ac-label { font-size:10px; color:var(--text-dim); letter-spacing:.08em; text-transform:uppercase; }
+  .pay-ac-val  { font-family:'Syne',sans-serif; font-weight:800; font-size:24px; color:var(--text); margin-top:2px; }
+  .pay-ac-val.low  { color:var(--negative); }
+  .pay-ac-val.mid  { color:#f7a24f; }
+  .pay-ac-val.high { color:var(--positive); }
+
+  .pay-alerts { display:flex; flex-direction:column; gap:8px; }
+  .pay-alert { padding:12px 16px; border-radius:10px; background:rgba(61,214,140,.08); border:1px solid rgba(61,214,140,.3); display:flex; align-items:center; gap:10px; }
+  .pay-alert-dot { width:8px; height:8px; border-radius:50%; background:var(--positive); flex-shrink:0; animation:pulseDot 2s ease-in-out infinite; }
+  .pay-alert-text { font-size:11px; color:var(--positive); letter-spacing:.04em; flex:1; line-height:1.6; }
+  .pay-alert-text strong { font-weight:700; }
+
+  .pay-form { display:flex; flex-direction:column; gap:8px; border-top:1px solid var(--border); padding-top:4px; }
+  .pay-form-label { font-size:10px; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase; }
+  .pay-form-row  { display:flex; gap:8px; align-items:center; }
+  .pay-form-row2 { display:flex; flex-direction:column; gap:6px; }
+  .pay-field-wrap { display:flex; align-items:center; gap:4px; background:var(--bg); border:1px solid var(--border-hi); border-radius:8px; padding:6px 10px; flex:1; }
+  .pay-field-prefix { font-size:9px; color:var(--text-dim); letter-spacing:.07em; text-transform:uppercase; white-space:nowrap; flex-shrink:0; }
+  .pay-field-suffix { font-size:11px; color:var(--text-dim); flex-shrink:0; }
+  .pay-input { flex:1; background:transparent; border:none; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:600; outline:none; min-width:0; -moz-appearance:textfield; }
+  .pay-input::-webkit-inner-spin-button, .pay-input::-webkit-outer-spin-button { -webkit-appearance:none; }
+  .pay-input::placeholder { color:var(--text-dim); font-weight:400; font-size:12px; }
+  .pay-input-note { font-size:12px; font-weight:400; }
+  .pay-arrow { font-size:16px; color:var(--text-dim); flex-shrink:0; }
+
+  .pay-dest-btn { flex:1; background:var(--bg); border:1px solid var(--border-hi); border-radius:8px; color:var(--text-dim); font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.05em; padding:7px 6px; cursor:pointer; transition:all .15s; text-align:center; }
+  .pay-dest-btn:hover  { border-color:var(--accent); color:var(--text); }
+  .pay-dest-btn.selected { background:var(--accent-dim); border-color:var(--accent); color:var(--accent); font-weight:700; }
+  .pay-repeat-btn { flex:1; background:var(--bg); border:1px solid var(--border-hi); border-radius:8px; color:var(--text-dim); font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.05em; padding:7px 6px; cursor:pointer; transition:all .15s; text-align:center; }
+  .pay-repeat-btn.active { background:rgba(61,214,140,.1); border-color:var(--positive); color:var(--positive); font-weight:700; }
+  .pay-form-err { font-size:11px; color:var(--negative); min-height:14px; }
+
+  .pay-list-wrap { display:flex; flex-direction:column; gap:8px; }
+  .pay-list-head { display:flex; align-items:center; justify-content:space-between; }
+  .pay-list-title { font-size:11px; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase; }
+  .pay-filter-btn { background:transparent; border:1px solid var(--border-hi); border-radius:6px; color:var(--text-dim); font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.06em; padding:3px 9px; cursor:pointer; transition:all .15s; }
+  .pay-filter-btn:hover  { color:var(--text); border-color:var(--accent); }
+  .pay-filter-btn.active { background:var(--accent-dim); border-color:var(--accent); color:var(--accent); }
+  .pay-list { display:flex; flex-direction:column; gap:6px; }
+
+  .pay-item { display:flex; align-items:flex-start; gap:8px; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:8px; animation:fadeIn .2s ease; }
+  .pay-item.triggered { border-color:rgba(61,214,140,.4); background:rgba(61,214,140,.04); }
+  .pay-item.done-item  { opacity:.45; }
+  .pay-item-check { width:16px; height:16px; border-radius:4px; border:1px solid var(--border-hi); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; transition:all .15s; font-size:10px; color:transparent; }
+  .pay-item-check:hover { border-color:var(--positive); }
+  .pay-item.done-item .pay-item-check { background:var(--positive); border-color:var(--positive); color:#fff; }
+  .pay-item-body { flex:1; display:flex; flex-direction:column; gap:3px; }
+  .pay-item-rule { font-size:12px; color:var(--text); letter-spacing:.03em; line-height:1.5; }
+  .pay-item-rule strong { color:var(--accent); }
+  .pay-item-meta { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  .pay-item-tag { font-size:9px; letter-spacing:.06em; padding:2px 7px; border-radius:4px; background:var(--border); color:var(--text-mid); white-space:nowrap; }
+  .pay-item-tag.repeat  { background:rgba(61,214,140,.1);  color:var(--positive); }
+  .pay-item-tag.once    { background:rgba(247,162,79,.1);   color:#f7a24f; }
+  .pay-item-tag.trigger { background:rgba(61,214,140,.15);  color:var(--positive); font-weight:700; }
+  .pay-item-actions { display:flex; gap:4px; flex-shrink:0; }
+
   /* ── Finanz-Panel ── */
   .fin-panel { width:100%; max-width:640px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px 24px; display:flex; flex-direction:column; gap:16px; }
 
@@ -660,6 +723,79 @@
         <div class="chart-tooltip-val" id="tooltipCumVal"></div>
       </div>
     </div>
+  </div>
+
+  <!-- Auszahlungsplanung -->
+  <div class="pay-panel" id="payPanel">
+
+    <!-- Header -->
+    <div class="pay-header">
+      <div>
+        <div class="pay-title">AUSZAHLUNGSPLANUNG</div>
+        <div class="pay-sub">Regeln für automatische Auszahlungen</div>
+      </div>
+      <div class="pay-ac-wrap">
+        <div class="pay-ac-label">AC-Balance</div>
+        <div class="pay-ac-val" id="payAcVal">– €</div>
+      </div>
+    </div>
+
+    <!-- Aktive Hinweise -->
+    <div class="pay-alerts" id="payAlerts"></div>
+
+    <!-- Neue Regel -->
+    <div class="pay-form">
+      <div class="pay-form-label">Neue Regel</div>
+      <div class="pay-form-row">
+        <div class="pay-field-wrap">
+          <span class="pay-field-prefix">AB</span>
+          <input type="number" id="payThreshold" class="pay-input" placeholder="2500" step="1">
+          <span class="pay-field-suffix">€</span>
+        </div>
+        <span class="pay-arrow">→</span>
+        <div class="pay-field-wrap">
+          <input type="number" id="payAmount" class="pay-input" placeholder="900" step="1">
+          <span class="pay-field-suffix">€</span>
+        </div>
+      </div>
+      <div class="pay-form-row2">
+        <div class="fin-btn-group">
+          <button class="pay-dest-btn" data-val="Neteller">Neteller</button>
+          <button class="pay-dest-btn" data-val="BTC L1">BTC L1</button>
+          <button class="pay-dest-btn" data-val="BTC L2">BTC L2</button>
+        </div>
+        <div class="fin-btn-group">
+          <button class="pay-dest-btn" data-val="BTC L3">BTC L3</button>
+          <button class="pay-repeat-btn active" id="payRepeatBtn" data-repeat="true">↺ Wiederkehrend</button>
+        </div>
+      </div>
+      <div class="pay-form-row">
+        <input type="text" id="payNote" class="pay-input pay-input-note" placeholder="Notiz (optional)">
+        <div class="pay-field-wrap" style="flex:0 0 auto;">
+          <span class="pay-field-prefix" style="font-size:9px;">AC danach</span>
+          <input type="number" id="payAfter" class="pay-input" placeholder="1600" step="1">
+          <span class="pay-field-suffix">€</span>
+        </div>
+      </div>
+      <div class="pay-form-err" id="payFormErr"></div>
+      <button class="btn-submit" id="paySubmitBtn" style="width:100%;margin-top:4px;">REGEL HINZUFÜGEN</button>
+    </div>
+
+    <!-- Regelliste -->
+    <div class="pay-list-wrap">
+      <div class="pay-list-head">
+        <span class="pay-list-title">Regeln</span>
+        <div class="fin-list-filter">
+          <button class="pay-filter-btn active" data-filter="all">Alle</button>
+          <button class="pay-filter-btn" data-filter="active">Aktiv</button>
+          <button class="pay-filter-btn" data-filter="done">Erledigt</button>
+        </div>
+      </div>
+      <div class="pay-list" id="payList">
+        <div class="empty-state">Noch keine Regeln definiert.</div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Finanz-Panel -->
@@ -1223,7 +1359,7 @@
 
   function hashPW(pw) {
     // Simple but sufficient for client-side: use a pre-computed check
-    return pw === '4895';
+    return pw === 'LTB26';
   }
 
   function isLoggedIn() {
@@ -1312,7 +1448,197 @@
     } catch {}
   }
 
-  // ── Finanz-Panel ─────────────────────────────────────────────────────────
+  // ── Auszahlungsplanung ───────────────────────────────────────────────────
+  const PAY_KEY   = 'monitor_payplan';
+  const PAY_SHEET = 'Auszahlungsplanung';
+
+  function loadPay()  { try { return JSON.parse(localStorage.getItem(PAY_KEY)) || []; } catch { return []; } }
+  function savePay(d) { try { localStorage.setItem(PAY_KEY, JSON.stringify(d)); } catch {} }
+
+  async function apiPayLoad() {
+    const res = await apiGet({ sheet: PAY_SHEET });
+    if (!res || !Array.isArray(res)) return;
+    const rules = res.map(r => ({
+      id:        String(r.id),
+      threshold: Number(r.threshold),
+      amount:    Number(r.amount),
+      dest:      r.dest,
+      afterAC:   r.afterAC !== '' ? Number(r.afterAC) : null,
+      repeat:    r.repeat === 'true' || r.repeat === true,
+      note:      r.note || '',
+      done:      r.done === 'true' || r.done === true,
+    }));
+    savePay(rules);
+  }
+  async function apiPayAdd(r)    { await apiGet({ sheet:PAY_SHEET, action:'add',    id:r.id, threshold:r.threshold, amount:r.amount, dest:encodeURIComponent(r.dest), afterAC:r.afterAC??'', repeat:r.repeat, note:encodeURIComponent(r.note||''), done:r.done }); }
+  async function apiPayDelete(id){ await apiGet({ sheet:PAY_SHEET, action:'delete', id }); }
+  async function apiPayUpdate(r) { await apiGet({ sheet:PAY_SHEET, action:'update', id:r.id, threshold:r.threshold, amount:r.amount, dest:encodeURIComponent(r.dest), afterAC:r.afterAC??'', repeat:r.repeat, note:encodeURIComponent(r.note||''), done:r.done }); }
+
+  let payFilter  = 'all';
+  let payEditId  = null;
+  let _payDest   = null;
+  let _payRepeat = true;
+
+  function setPayDest(val) {
+    _payDest = val;
+    document.querySelectorAll('.pay-dest-btn').forEach(b => b.classList.toggle('selected', b.dataset.val === val));
+  }
+
+  function renderPay() {
+    const rules  = loadPay();
+    const acVal  = loadBalances().balAC || 0;
+
+    // AC-Balance display
+    const acEl = document.getElementById('payAcVal');
+    acEl.textContent = Math.round(acVal).toLocaleString('de-DE') + ' €';
+    acEl.className   = 'pay-ac-val ' + (acVal >= 3500 ? 'high' : acVal >= 2000 ? 'mid' : acVal > 0 ? 'low' : '');
+
+    // Triggered alerts
+    const alertsEl = document.getElementById('payAlerts');
+    alertsEl.innerHTML = '';
+    rules.filter(r => !r.done && acVal >= r.threshold).forEach(r => {
+      const div = document.createElement('div');
+      div.className = 'pay-alert';
+      div.innerHTML =
+        '<div class="pay-alert-dot"></div>' +
+        '<div class="pay-alert-text">' +
+          '🎯 AC-Balance bei <strong>' + Math.round(acVal).toLocaleString('de-DE') + ' €</strong> — ' +
+          'Regel aktiv: <strong>' + r.amount.toLocaleString('de-DE') + ' €</strong> auszahlen an <strong>' + r.dest + '</strong>' +
+          (r.afterAC !== null ? ', AC danach: <strong>' + r.afterAC.toLocaleString('de-DE') + ' €</strong>' : '') +
+          (r.note ? ' (' + r.note + ')' : '') +
+        '</div>';
+      alertsEl.appendChild(div);
+    });
+
+    // Filter
+    const filtered = rules.filter(r => {
+      if (payFilter === 'active') return !r.done;
+      if (payFilter === 'done')   return r.done;
+      return true;
+    }).sort((a, b) => a.threshold - b.threshold);
+
+    const listEl = document.getElementById('payList');
+    if (!filtered.length) {
+      listEl.innerHTML = '<div class="empty-state">Keine Regeln.</div>';
+      return;
+    }
+    listEl.innerHTML = '';
+    filtered.forEach(r => {
+      const triggered = !r.done && acVal >= r.threshold;
+      const div = document.createElement('div');
+      div.className = 'pay-item' + (r.done ? ' done-item' : triggered ? ' triggered' : '');
+      div.innerHTML =
+        '<div class="pay-item-check" data-id="' + r.id + '">' + (r.done ? '✓' : '') + '</div>' +
+        '<div class="pay-item-body">' +
+          '<div class="pay-item-rule">Ab <strong>' + r.threshold.toLocaleString('de-DE') + ' €</strong> → <strong>' + r.amount.toLocaleString('de-DE') + ' €</strong> an ' + r.dest +
+            (r.afterAC !== null ? ', AC danach ' + r.afterAC.toLocaleString('de-DE') + ' €' : '') +
+          '</div>' +
+          '<div class="pay-item-meta">' +
+            '<span class="pay-item-tag ' + (r.repeat ? 'repeat' : 'once') + '">' + (r.repeat ? '↺ Wiederkehrend' : '1× Einmalig') + '</span>' +
+            (triggered ? '<span class="pay-item-tag trigger">⚡ Jetzt fällig</span>' : '') +
+            (r.note ? '<span class="pay-item-tag">' + r.note + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="pay-item-actions">' +
+          '<button class="btn-action edit pay-edit-btn" data-id="' + r.id + '">EDIT</button>' +
+          '<button class="btn-action del  pay-del-btn"  data-id="' + r.id + '">DEL</button>' +
+        '</div>';
+      listEl.appendChild(div);
+    });
+
+    // Handlers
+    listEl.querySelectorAll('.pay-item-check').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const rules2 = loadPay();
+        const r = rules2.find(x => x.id === btn.dataset.id);
+        if (!r) return;
+        if (r.repeat && r.done) { r.done = false; } else { r.done = !r.done; }
+        savePay(rules2); renderPay();
+        await apiPayUpdate(r);
+      });
+    });
+    listEl.querySelectorAll('.pay-edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const r = loadPay().find(x => x.id === btn.dataset.id);
+        if (!r) return;
+        payEditId = r.id;
+        document.getElementById('payThreshold').value = r.threshold;
+        document.getElementById('payAmount').value    = r.amount;
+        document.getElementById('payAfter').value     = r.afterAC ?? '';
+        document.getElementById('payNote').value      = r.note || '';
+        setPayDest(r.dest);
+        _payRepeat = r.repeat;
+        const rb = document.getElementById('payRepeatBtn');
+        rb.classList.toggle('active', r.repeat);
+        rb.dataset.repeat = r.repeat;
+        document.getElementById('paySubmitBtn').textContent = 'SPEICHERN';
+      });
+    });
+    listEl.querySelectorAll('.pay-del-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const rules2 = loadPay().filter(x => x.id !== btn.dataset.id);
+        savePay(rules2); renderPay();
+        await apiPayDelete(btn.dataset.id);
+      });
+    });
+  }
+
+  // Dest buttons
+  document.querySelectorAll('.pay-dest-btn').forEach(b => b.addEventListener('click', () => setPayDest(b.dataset.val)));
+
+  // Repeat toggle
+  const payRepeatBtn = document.getElementById('payRepeatBtn');
+  payRepeatBtn.addEventListener('click', () => {
+    _payRepeat = !_payRepeat;
+    payRepeatBtn.classList.toggle('active', _payRepeat);
+    payRepeatBtn.dataset.repeat = _payRepeat;
+  });
+
+  // Filter
+  document.querySelectorAll('.pay-filter-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      payFilter = b.dataset.filter;
+      document.querySelectorAll('.pay-filter-btn').forEach(x => x.classList.toggle('active', x === b));
+      renderPay();
+    });
+  });
+
+  // Submit
+  document.getElementById('paySubmitBtn').addEventListener('click', async () => {
+    const threshold = Number(document.getElementById('payThreshold').value);
+    const amount    = Number(document.getElementById('payAmount').value);
+    const afterAC   = document.getElementById('payAfter').value !== '' ? Number(document.getElementById('payAfter').value) : null;
+    const note      = document.getElementById('payNote').value.trim();
+    const errEl     = document.getElementById('payFormErr');
+
+    if (!threshold || threshold <= 0) { errEl.textContent = 'Bitte einen Schwellenwert eingeben.'; return; }
+    if (!amount    || amount    <= 0) { errEl.textContent = 'Bitte einen Auszahlungsbetrag eingeben.'; return; }
+    if (!_payDest)                    { errEl.textContent = 'Bitte ein Ziel wählen.'; return; }
+    errEl.textContent = '';
+
+    const rules = loadPay();
+    if (payEditId) {
+      const r = rules.find(x => x.id === payEditId);
+      if (r) { r.threshold = threshold; r.amount = amount; r.dest = _payDest; r.afterAC = afterAC; r.repeat = _payRepeat; r.note = note; }
+      savePay(rules); renderPay();
+      await apiPayUpdate(rules.find(x => x.id === payEditId));
+      payEditId = null;
+      document.getElementById('paySubmitBtn').textContent = 'REGEL HINZUFÜGEN';
+    } else {
+      const r = { id: String(Date.now()), threshold, amount, dest: _payDest, afterAC, repeat: _payRepeat, note, done: false };
+      rules.push(r);
+      savePay(rules); renderPay();
+      await apiPayAdd(r);
+    }
+
+    document.getElementById('payThreshold').value = '';
+    document.getElementById('payAmount').value    = '';
+    document.getElementById('payAfter').value     = '';
+    document.getElementById('payNote').value      = '';
+    setPayDest(null);
+  });
+
+  // ── Finanz-Panel JS ──────────────────────────────────────────────────────
   const FIN_KEY = 'monitor_finance';
 
   function loadFin()    { try { return JSON.parse(localStorage.getItem(FIN_KEY)) || []; } catch { return []; } }
@@ -1610,7 +1936,7 @@
     saveAll(all);
 
     // Parallel: Finanzen, Ziele, Bestände laden
-    await Promise.all([apiFinLoad(), apiGoalsLoad(), apiBalLoad()]);
+    await Promise.all([apiFinLoad(), apiGoalsLoad(), apiBalLoad(), apiPayLoad()]);
 
     setStatus('\u2713 Synchronisiert', 'ok');
     render();
@@ -2470,6 +2796,7 @@
     renderFin();
     renderGoals();
     renderBalances();
+    renderPay();
   }
 
   // ── Main input ────────────────────────────────────────────────────────────
