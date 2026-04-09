@@ -97,7 +97,7 @@
 
   /* ── Button Groups (Session / Risk / Luck) ── */
   .btn-group-row { display:flex; align-items:flex-start; gap:12px; margin-top:10px; }
-  .btn-group-label { font-size:10px; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase; min-width:52px; flex-shrink:0; padding-top:8px; }
+  .btn-group-label { font-size:10px; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase; min-width:72px; flex-shrink:0; padding-top:8px; }
   .btn-group { display:grid; gap:5px; flex:1; }
   .btn-group.grid-3 { grid-template-columns: repeat(3, 1fr); }
   .btn-group.grid-4 { grid-template-columns: repeat(3, 1fr); }
@@ -464,9 +464,26 @@
   .fin-show-more { width:100%; background:transparent; border:1px solid var(--border-hi); border-radius:8px; color:var(--text-dim); font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.07em; padding:7px; cursor:pointer; transition:all .15s; margin-top:2px; }
   .fin-show-more:hover { border-color:var(--accent); color:var(--accent); background:rgba(79,142,247,.06); }
 
-  /* ── Bestände ── */
-  .fin-balances-wrap { border-top:1px solid var(--border); padding-top:12px; display:flex; flex-direction:column; gap:10px; }
-  .fin-balances-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  /* ── Bestände (aufklappbar) ── */
+  .fin-balances-wrap { border-top:1px solid var(--border); padding-top:4px; }
+  .fin-balances-head { display:flex; align-items:center; justify-content:space-between; padding:8px 0; cursor:pointer; user-select:none; }
+  .fin-balances-head:hover .fin-list-title { color:var(--text); }
+  .fin-balances-chevron { font-size:11px; color:var(--text-dim); transition:transform .2s; }
+  .fin-balances-chevron.open { transform:rotate(180deg); }
+  .fin-balances-body { padding-bottom:6px; }
+  .fin-balances-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px; }
+
+  /* ── AC-Balance Slider ── */
+  .ac-slider-wrap { display:flex; flex-direction:column; gap:6px; padding:14px 0 6px; border-top:1px solid var(--border); }
+  .ac-slider-header { display:flex; align-items:center; justify-content:space-between; }
+  .ac-slider-val { font-family:'Syne',sans-serif; font-weight:700; font-size:20px; }
+  .ac-slider-val.low  { color:var(--negative); }
+  .ac-slider-val.mid  { color:#f7a24f; }
+  .ac-slider-val.high { color:var(--positive); }
+  .ac-slider { -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:3px; background:var(--border); outline:none; cursor:pointer; }
+  .ac-slider::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:22px; height:22px; border-radius:50%; background:var(--accent); cursor:pointer; box-shadow:0 0 8px rgba(79,142,247,.4); border:2px solid var(--surface); }
+  .ac-slider::-moz-range-thumb { width:22px; height:22px; border-radius:50%; background:var(--accent); cursor:pointer; border:2px solid var(--surface); }
+  .ac-slider-ticks { display:flex; justify-content:space-between; font-size:9px; color:var(--text-dim); letter-spacing:.04em; margin-top:2px; }
   .fin-bal-item { display:flex; flex-direction:column; gap:5px; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
   .fin-bal-label { font-size:10px; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase; }
   .fin-bal-bar-wrap { height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
@@ -725,312 +742,6 @@
     </div>
   </div>
 
-  <!-- Auszahlungsplanung -->
-  <div class="pay-panel" id="payPanel">
-
-    <!-- Header -->
-    <div class="pay-header">
-      <div>
-        <div class="pay-title">AUSZAHLUNGSPLANUNG</div>
-        <div class="pay-sub">Regeln für automatische Auszahlungen</div>
-      </div>
-      <div class="pay-ac-wrap">
-        <div class="pay-ac-label">AC-Balance</div>
-        <div class="pay-ac-val" id="payAcVal">– €</div>
-      </div>
-    </div>
-
-    <!-- Aktive Hinweise -->
-    <div class="pay-alerts" id="payAlerts"></div>
-
-    <!-- Neue Regel -->
-    <div class="pay-form">
-      <div class="pay-form-label">Neue Regel</div>
-      <div class="pay-form-row">
-        <div class="pay-field-wrap">
-          <span class="pay-field-prefix">AB</span>
-          <input type="number" id="payThreshold" class="pay-input" placeholder="2500" step="1">
-          <span class="pay-field-suffix">€</span>
-        </div>
-        <span class="pay-arrow">→</span>
-        <div class="pay-field-wrap">
-          <input type="number" id="payAmount" class="pay-input" placeholder="900" step="1">
-          <span class="pay-field-suffix">€</span>
-        </div>
-      </div>
-      <div class="pay-form-row2">
-        <div class="fin-btn-group">
-          <button class="pay-dest-btn" data-val="Neteller">Neteller</button>
-          <button class="pay-dest-btn" data-val="BTC L1">BTC L1</button>
-          <button class="pay-dest-btn" data-val="BTC L2">BTC L2</button>
-        </div>
-        <div class="fin-btn-group">
-          <button class="pay-dest-btn" data-val="BTC L3">BTC L3</button>
-          <button class="pay-repeat-btn active" id="payRepeatBtn" data-repeat="true">↺ Wiederkehrend</button>
-        </div>
-      </div>
-      <div class="pay-form-row">
-        <input type="text" id="payNote" class="pay-input pay-input-note" placeholder="Notiz (optional)">
-        <div class="pay-field-wrap" style="flex:0 0 auto;">
-          <span class="pay-field-prefix" style="font-size:9px;">AC danach</span>
-          <input type="number" id="payAfter" class="pay-input" placeholder="1600" step="1">
-          <span class="pay-field-suffix">€</span>
-        </div>
-      </div>
-      <div class="pay-form-err" id="payFormErr"></div>
-      <button class="btn-submit" id="paySubmitBtn" style="width:100%;margin-top:4px;">REGEL HINZUFÜGEN</button>
-    </div>
-
-    <!-- Regelliste -->
-    <div class="pay-list-wrap">
-      <div class="pay-list-head">
-        <span class="pay-list-title">Regeln</span>
-        <div class="fin-list-filter">
-          <button class="pay-filter-btn active" data-filter="all">Alle</button>
-          <button class="pay-filter-btn" data-filter="active">Aktiv</button>
-          <button class="pay-filter-btn" data-filter="done">Erledigt</button>
-        </div>
-      </div>
-      <div class="pay-list" id="payList">
-        <div class="empty-state">Noch keine Regeln definiert.</div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Finanz-Panel -->
-  <div class="fin-panel" id="finPanel">
-
-    <!-- Header -->
-    <div class="fin-header">
-      <div class="fin-header-left">
-        <div class="fin-title">KAPITAL</div>
-        <div class="fin-sub" id="finSub">Einzahlungen vs. Auszahlungen</div>
-      </div>
-      <div class="fin-net" id="finNet">–</div>
-    </div>
-
-    <!-- Fortschrittsbalken -->
-    <div class="fin-bar-wrap">
-      <div class="fin-bar-fill" id="finBarFill" style="width:0%"></div>
-      <div class="fin-bar-label-left" id="finBarLabelLeft">0 €</div>
-      <div class="fin-bar-label-right" id="finBarLabelRight">Ziel: 0 €</div>
-    </div>
-
-    <!-- Stats -->
-    <div class="fin-stats">
-      <div class="fin-stat">
-        <div class="fin-stat-label">Eingezahlt</div>
-        <div class="fin-stat-val neg" id="finDeposit">0 €</div>
-      </div>
-      <div class="fin-stat">
-        <div class="fin-stat-label">Ausgezahlt</div>
-        <div class="fin-stat-val pos" id="finWithdraw">0 €</div>
-      </div>
-      <div class="fin-stat">
-        <div class="fin-stat-label">Netto</div>
-        <div class="fin-stat-val" id="finNetStat">0 €</div>
-      </div>
-    </div>
-
-    <!-- Neue Transaktion -->
-    <div class="fin-form">
-      <div class="fin-form-label">Neue Transaktion</div>
-      <div class="fin-form-row">
-        <!-- Betrag -->
-        <div class="euro-wrap" style="width:120px;">
-          <input type="number" id="finAmount" placeholder="0" step="1" autocomplete="off">
-        </div>
-        <!-- Typ -->
-        <div class="fin-btn-group">
-          <button class="fin-type-btn" data-val="deposit">Einzahlung</button>
-          <button class="fin-type-btn" data-val="withdraw">Auszahlung</button>
-        </div>
-        <!-- Plattform -->
-        <div class="fin-btn-group">
-          <button class="fin-plat-btn" data-val="Bitcoin">Bitcoin</button>
-          <button class="fin-plat-btn" data-val="Neteller">Neteller</button>
-        </div>
-        <button class="btn-submit" id="finSubmitBtn" style="height:44px;">OK</button>
-      </div>
-      <div class="fin-form-err" id="finFormErr"></div>
-    </div>
-
-    <!-- Transaktionsliste -->
-    <div class="fin-list-wrap">
-      <div class="fin-list-head">
-        <span class="fin-list-title">Verlauf</span>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div class="fin-list-filter">
-            <button class="fin-filter-btn active" data-filter="all">Alle</button>
-            <button class="fin-filter-btn" data-filter="Bitcoin">Bitcoin</button>
-            <button class="fin-filter-btn" data-filter="Neteller">Neteller</button>
-          </div>
-        </div>
-      </div>
-      <div class="fin-list" id="finList"></div>
-      <button class="fin-show-more" id="finShowMore" style="display:none">▼ Alle anzeigen</button>
-    </div>
-
-    <!-- Bestände -->
-    <div class="fin-balances-wrap">
-      <div class="fin-list-title" style="margin-bottom:8px;">Bestände</div>
-      <div class="fin-balances-grid">
-
-        <div class="fin-bal-item">
-          <div class="fin-bal-label">BTC L1</div>
-          <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill" id="balBarL1" style="width:0%"></div></div>
-          <div class="fin-bal-row">
-            <input type="number" class="fin-bal-input" id="balL1" placeholder="0.00000000" step="0.00000001">
-            <span class="fin-bal-target">/ 0.1 BTC</span>
-            <button class="fin-bal-save" data-key="balL1">✓</button>
-          </div>
-        </div>
-
-        <div class="fin-bal-item">
-          <div class="fin-bal-label">BTC L2</div>
-          <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill" id="balBarL2" style="width:0%"></div></div>
-          <div class="fin-bal-row">
-            <input type="number" class="fin-bal-input" id="balL2" placeholder="0.00000000" step="0.00000001">
-            <span class="fin-bal-target">/ 1.0 BTC</span>
-            <button class="fin-bal-save" data-key="balL2">✓</button>
-          </div>
-        </div>
-
-        <div class="fin-bal-item">
-          <div class="fin-bal-label">BTC L3</div>
-          <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill" id="balBarL3" style="width:0%"></div></div>
-          <div class="fin-bal-row">
-            <input type="number" class="fin-bal-input" id="balL3" placeholder="0.00000000" step="0.00000001">
-            <span class="fin-bal-target">/ 1.0 BTC</span>
-            <button class="fin-bal-save" data-key="balL3">✓</button>
-          </div>
-        </div>
-
-        <div class="fin-bal-item">
-          <div class="fin-bal-label">Neteller</div>
-          <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill fin-bal-bar-eur" id="balBarNeteller" style="width:0%"></div></div>
-          <div class="fin-bal-row">
-            <input type="number" class="fin-bal-input" id="balNeteller" placeholder="0" step="1">
-            <span class="fin-bal-target">/ 5.000 €</span>
-            <button class="fin-bal-save" data-key="balNeteller">✓</button>
-          </div>
-        </div>
-
-        <div class="fin-bal-item">
-          <div class="fin-bal-label">AC-Balance</div>
-          <div class="fin-bal-bar-wrap"><div class="fin-bal-bar-fill fin-bal-bar-eur" id="balBarAC" style="width:0%"></div></div>
-          <div class="fin-bal-row">
-            <input type="number" class="fin-bal-input" id="balAC" placeholder="0" step="1">
-            <span class="fin-bal-target">/ 7.000 €</span>
-            <button class="fin-bal-save" data-key="balAC">✓</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Ziele-Panel -->
-  <div class="goals-panel" id="goalsPanel">
-
-    <!-- Header -->
-    <div class="goals-header">
-      <div>
-        <div class="goals-title">ZIELE</div>
-        <div class="goals-sub" id="goalsSub">Beschaffungen aus Spielgewinnen</div>
-      </div>
-      <div class="goals-net" id="goalsNet">–</div>
-    </div>
-
-    <!-- Fortschrittsbalken -->
-    <div class="goals-bar-wrap">
-      <div class="goals-bar-fill" id="goalsBarFill" style="width:0%"></div>
-      <div class="goals-bar-label-left"  id="goalsBarLeft">0 €</div>
-      <div class="goals-bar-label-right" id="goalsBarRight">Ziel: 0 €</div>
-    </div>
-
-    <!-- Stats Kategorien -->
-    <div class="goals-stats">
-      <div class="goals-stat">
-        <div class="goals-stat-label">Monatlich</div>
-        <div class="goals-stat-val" id="goalsStatMonthly">–</div>
-        <div class="goals-stat-sub" id="goalsStatMonthlySub"></div>
-      </div>
-      <div class="goals-stat">
-        <div class="goals-stat-label">Einmalig</div>
-        <div class="goals-stat-val" id="goalsStatOnce">–</div>
-        <div class="goals-stat-sub" id="goalsStatOnceSub"></div>
-      </div>
-      <div class="goals-stat">
-        <div class="goals-stat-label">Eventuell</div>
-        <div class="goals-stat-val" id="goalsStatMaybe">–</div>
-        <div class="goals-stat-sub" id="goalsStatMaybeSub"></div>
-      </div>
-      <div class="goals-stat">
-        <div class="goals-stat-label">Spielgewinn</div>
-        <div class="goals-stat-val" id="goalsStatProfit">–</div>
-      </div>
-    </div>
-
-    <!-- Neues Ziel -->
-    <div class="goals-form">
-      <div class="goals-form-label">Neues Ziel</div>
-      <div class="goals-form-row">
-        <input type="text"   id="goalName"   class="goals-input goals-input-name" placeholder="Bezeichnung">
-        <input type="number" id="goalAmount" class="goals-input goals-input-amount" placeholder="€">
-        <select id="goalDate" class="goals-input goals-input-date">
-          <option value="">Datum wählen</option>
-        </select>
-      </div>
-      <div class="goals-form-row2">
-        <div class="goals-form-row2-inner">
-          <div class="fin-btn-group" style="flex:1">
-            <button class="goal-type-btn" data-val="monthly">Monatlich</button>
-            <button class="goal-type-btn" data-val="once">Einmalig</button>
-            <button class="goal-type-btn" data-val="maybe">Eventuell</button>
-          </div>
-          <button class="btn-submit" id="goalSubmitBtn" style="height:38px;font-size:11px;flex-shrink:0;">OK</button>
-        </div>
-        <div class="fin-btn-group">
-          <button class="goal-prio-btn" data-val="high">Hoch</button>
-          <button class="goal-prio-btn" data-val="mid">Mittel</button>
-          <button class="goal-prio-btn" data-val="low">Gering</button>
-        </div>
-      </div>
-      <div class="goals-form-err" id="goalsFormErr"></div>
-    </div>
-
-    <!-- Listen -->
-    <div class="goals-section" id="goalsSectionMonthly">
-      <div class="goals-section-head" data-section="monthly">
-        <span class="goals-section-title">Monatlich</span>
-        <span class="goals-section-sum" id="goalsSumMonthly"></span>
-        <span class="goals-section-chevron">▾</span>
-      </div>
-      <div class="goals-list" id="goalsListMonthly"></div>
-    </div>
-
-    <div class="goals-section" id="goalsSectionOnce">
-      <div class="goals-section-head" data-section="once">
-        <span class="goals-section-title">Einmalig</span>
-        <span class="goals-section-sum" id="goalsSumOnce"></span>
-        <span class="goals-section-chevron">▾</span>
-      </div>
-      <div class="goals-list" id="goalsListOnce"></div>
-    </div>
-
-    <div class="goals-section" id="goalsSectionMaybe">
-      <div class="goals-section-head" data-section="maybe">
-        <span class="goals-section-title">Eventuell</span>
-        <span class="goals-section-sum" id="goalsSumMaybe"></span>
-        <span class="goals-section-chevron">▾</span>
-      </div>
-      <div class="goals-list" id="goalsListMaybe"></div>
-    </div>
-
-  </div>
 
   <!-- Runden-Panel -->
   <div class="round-panel" id="roundPanel">
@@ -1134,7 +845,7 @@
       <!-- Zeile 2: Session -->
       <div class="btn-group-row">
         <div class="btn-group-label">SESSION</div>
-        <div class="btn-group grid-4" id="quoteGroup" data-field="quoteSelect">
+        <div class="btn-group grid-3" id="quoteGroup" data-field="quoteSelect">
           <button class="btn-opt" data-value="Kleine Quote">Kleine Quote</button>
           <button class="btn-opt" data-value="Sehr kleine Quote">Sehr klein</button>
           <button class="btn-opt" data-value="Hohe Quote">Hohe Quote</button>
@@ -1142,6 +853,7 @@
           <button class="btn-opt" data-value="50/50">50/50</button>
           <button class="btn-opt" data-value="Multiple Bets pro Hand">Multi Bets</button>
           <button class="btn-opt" data-value="Trading">Trading</button>
+          <button class="btn-opt" data-value="Gambling">Gambling</button>
           <button class="btn-opt" data-value="" style="visibility:hidden;pointer-events:none"></button>
         </div>
         <input type="hidden" id="quoteSelect">
@@ -1160,9 +872,9 @@
         <input type="hidden" id="riskSelect">
       </div>
 
-      <!-- Zeile 4: Luck -->
+      <!-- Zeile 4: Needed Luck -->
       <div class="btn-group-row">
-        <div class="btn-group-label">LUCK</div>
+        <div class="btn-group-label">NEEDED LUCK</div>
         <div class="btn-group grid-5" id="luckGroup" data-field="luckSelect">
           <button class="btn-opt" data-value="1">1</button>
           <button class="btn-opt" data-value="2">2</button>
@@ -1488,11 +1200,6 @@
     const rules  = loadPay();
     const acVal  = loadBalances().balAC || 0;
 
-    // AC-Balance display
-    const acEl = document.getElementById('payAcVal');
-    acEl.textContent = Math.round(acVal).toLocaleString('de-DE') + ' €';
-    acEl.className   = 'pay-ac-val ' + (acVal >= 3500 ? 'high' : acVal >= 2000 ? 'mid' : acVal > 0 ? 'low' : '');
-
     // Triggered alerts
     const alertsEl = document.getElementById('payAlerts');
     alertsEl.innerHTML = '';
@@ -1802,7 +1509,6 @@
       { key:'balL2',       isBtc:true  },
       { key:'balL3',       isBtc:true  },
       { key:'balNeteller', isBtc:false },
-      { key:'balAC',       isBtc:false },
     ];
     configs.forEach(({ key }) => {
       const val    = bal[key] || 0;
@@ -1812,12 +1518,56 @@
       if (input && !input.matches(':focus')) input.value = val || '';
       const barId = 'balBar' + key.charAt(3).toUpperCase() + key.slice(4);
       const bar   = document.getElementById(barId);
-      if (bar) {
-        bar.style.width = pct + '%';
-        bar.classList.toggle('covered', pct >= 100);
-      }
+      if (bar) { bar.style.width = pct + '%'; bar.classList.toggle('covered', pct >= 100); }
     });
+    // Slider
+    const acVal = bal.balAC || 0;
+    const slider = document.getElementById('acSlider');
+    if (slider && !slider.matches(':active')) slider.value = acVal;
+    updateAcSliderDisplay(acVal);
   }
+
+  function updateAcSliderDisplay(val) {
+    const el = document.getElementById('acSliderVal');
+    if (!el) return;
+    el.textContent = Number(val).toLocaleString('de-DE') + ' €';
+    el.className   = 'ac-slider-val ' + (val >= 4000 ? 'high' : val >= 2000 ? 'mid' : val > 0 ? 'low' : '');
+  }
+
+  // AC Slider
+  const acSlider = document.getElementById('acSlider');
+  acSlider.addEventListener('input', () => updateAcSliderDisplay(Number(acSlider.value)));
+  acSlider.addEventListener('change', async () => {
+    const val = Number(acSlider.value);
+    const bal = loadBalances();
+    bal.balAC = val;
+    saveBalances(bal);
+    updateAcSliderDisplay(val);
+    renderPay();
+    await apiBalSave('balAC', val);
+  });
+
+  // Collapsible Bestände
+  const balHead    = document.getElementById('finBalancesHead');
+  const balBody    = document.getElementById('finBalancesBody');
+  const balChevron = document.getElementById('finBalancesChevron');
+  let   balExpanded = false;
+  balHead.addEventListener('click', () => {
+    balExpanded = !balExpanded;
+    balBody.style.display = balExpanded ? '' : 'none';
+    balChevron.classList.toggle('open', balExpanded);
+  });
+
+  // Collapsible Auszahlungsplanung
+  const payHead    = document.getElementById('finPayHead');
+  const payBody    = document.getElementById('finPayBody');
+  const payChevron = document.getElementById('finPayChevron');
+  let   payBodyExpanded = false;
+  payHead.addEventListener('click', () => {
+    payBodyExpanded = !payBodyExpanded;
+    payBody.style.display = payBodyExpanded ? '' : 'none';
+    payChevron.classList.toggle('open', payBodyExpanded);
+  });
 
   // Save buttons
   document.querySelectorAll('.fin-bal-save').forEach(btn => {
@@ -1934,12 +1684,14 @@
     }
 
     saveAll(all);
-
-    // Parallel: Finanzen, Ziele, Bestände laden
-    await Promise.all([apiFinLoad(), apiGoalsLoad(), apiBalLoad(), apiPayLoad()]);
-
     setStatus('\u2713 Synchronisiert', 'ok');
     render();
+
+    // Sekundäre Daten im Hintergrund laden (ohne await — blockiert nicht)
+    apiFinLoad();
+    apiGoalsLoad();
+    apiBalLoad();
+    apiPayLoad();
   }
 
   async function apiFinLoad() {
@@ -2793,10 +2545,6 @@
     renderRisk();
     renderChart();
     renderRound();
-    renderFin();
-    renderGoals();
-    renderBalances();
-    renderPay();
   }
 
   // ── Main input ────────────────────────────────────────────────────────────
